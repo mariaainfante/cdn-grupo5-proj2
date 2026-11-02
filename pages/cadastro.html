@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="/styles/cadastro.css">
+    <title>Login conatus</title>
+</head>
+<body>
+    <div class="row g-0">
+        <div class="col-lg-6 form">
+             <img src="/img/Logoconatus.png" alt="logo" class="logo">
+
+            <div class="form-content">
+                
+                <h2 class="titulo" ><b>Crie sua conta!</b></h2>
+
+                <p class="descricao">Cadastre-se para começar a monitorar seus projetos.</p>
+
+                <form action="dashconsultor.html">
+
+                    <label class="label" for="nome">Nome completo</label>
+                    <input 
+                        class="input" 
+                        type="text" 
+                        id="nome" 
+                        name="nome" 
+                        placeholder="Digite seu nome completo"
+                    >
+
+                    <label class="label" for="email">E-mail</label>
+                    <input 
+                        class="input" 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="Digite seu e-mail"
+                    >
+
+
+                    <label class="label" for="telefone">Telefone</label>
+                    <input 
+                        class="input" 
+                        type="tel" 
+                        id="telefone" 
+                        name="telefone" 
+                        placeholder="Digite seu telefone"
+                    >
+
+                    <label class="label" for="senha">Senha</label>
+                    <input 
+                        class="input" 
+                        type="password" 
+                        id="senha" 
+                        name="senha" 
+                        placeholder="Digite sua senha"
+                    >
+
+                    <label class="label" for="confirmar-senha">Confirmar senha</label>
+                    <input 
+                        class="input" 
+                        type="password" 
+                        id="confirmar-senha" 
+                        name="confirmar-senha" 
+                        placeholder="Digite sua senha novamente"
+                    >
+
+                    <label class="label" for="funcao">Função</label>
+                    <select class="input" id="funcao" name="funcao">
+                        <option value="" selected disabled>Selecione sua função</option>
+                        <option value="consultor">Consultor</option>
+                        <option value="tecnico">Técnico</option>
+                        <option value="administrador">Administrador</option>
+                    </select>
+
+                    <div>
+                        <input type="checkbox" id="termos" name="termos">
+                        <label for="termos">Aceito os termos de uso</label>
+                    </div>
+
+                    <button class="button" type="submit">Cadastrar</button>
+                    <p class="esqueci"><a href="./login.html">Já tem conta? Login</a></p>
+
+                </form>
+            </div>
+            
+        </div>
+
+
+        <div class="col-lg-6 d-none d-lg-block">
+
+            <img class="image" src="https://marketplace.canva.com/NHGTY/MAG8tGNHGTY/1/tl/canva-fundo-azul-escuro-s%C3%B3lido-MAG8tGNHGTY.jpg" alt="imagem-doida">
+
+        </div>
+
+    </div>
+</body>
+</html>
