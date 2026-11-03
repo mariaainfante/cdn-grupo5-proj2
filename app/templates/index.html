@@ -6,15 +6,13 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/lading.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Momo+Trust+Sans:wght@200..800&display=swap" rel="stylesheet">	
     <title>lading-page</title>
-
 </head>
 <body>
-
     <header>
         
         <img src="{{ url_for('static', filename='img/Logoconatus.png') }}" alt="logo conatus" class="logo">
         
-        <a href="./login.html" class="btn-header">Log in</a>
+        <a href= "{{ url_for('auth.login')}}" class="btn-header">Log in</a>
     </header>
 
     <section class="hero">
@@ -25,10 +23,5 @@
            <a class="button" href="cadastro.html">Comece agora!</a>
         </div>
     </section>
-
-
-
-
-
 </body>
 </html>
