@@ -1,0 +1,47 @@
+{% extends "base_dashboard.html" %}
+{% set active_page = 'projetos' %}
+
+{% block title %}Conatus - Projetos{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/projeto.css') }}">
+{% endblock %}
+
+{% block content %}
+  <!-- Update these URLs if your Flask routes use different paths. -->
+  <a href="/gestor" class="link-azul d-inline-block mb-3">Voltar para Meus Projetos</a>
+
+  <h1 class="titulo mb-1">Projeto</h1>
+
+  <div class="d-flex flex-column align-items-start mb-3">
+    <a href="/participantes" class="link-azul">Participantes</a>
+    <a href="/editar-projeto" class="link-azul">Editar projeto e estado</a>
+  </div>
+
+  <section class="dados bg-white border rounded-3 p-3">
+    <h2 class="dados__titulo">Dados do projeto</h2>
+
+    <dl class="mb-0">
+      <dt>Nome</dt>
+      <dd>Projeto exemplo</dd>
+
+      <dt>Descrição</dt>
+      <dd>Projeto ilustrativo de automação residencial. Dados fictícios para visualização do layout.</dd>
+
+      <dt>Cliente</dt>
+      <dd><a href="/info-cliente" class="link-azul">Cliente exemplo</a></dd>
+
+      <dt>Estado</dt>
+      <dd><span class="selo">Em andamento</span></dd>
+
+      <dt>Data de criação (UTC)</dt>
+      <dd>28/10/2026 07:00:00</dd>
+
+      <dt>Início previsto</dt>
+      <dd>28/10/2026</dd>
+
+      <dt>Término previsto</dt>
+      <dd>18/12/2026</dd>
+    </dl>
+  </section>
+{% endblock %}
