@@ -21,7 +21,6 @@
           <img src="{{ url_for('static', filename='img/Logoconatus.png') }}" alt="Conatus" class="logo">
         </a>
 
-        <!-- Change these URL paths if your dashboard routes use different addresses. -->
         <nav class="menu d-flex gap-3" aria-label="Principal">
           <a href="/gestor"
              class="menu__link{% if active_page|default('projetos') == 'projetos' %} menu__link--ativo{% endif %}"
@@ -35,8 +34,9 @@
       <div class="d-flex align-items-center gap-3 gap-md-4">
         <span class="usuario">{{ user_role|default('Gestor') }}</span>
         {% block logout_control %}
-          <!-- Wire this button to your logout route when authentication is implemented. -->
+          <!-- Colocar no logout logo de implementar. -->
           <button type="button" class="botao-sair">Sair</button>
+          <!-- Não deve ser button deve ser a. -->
         {% endblock %}
       </div>
     </div>
