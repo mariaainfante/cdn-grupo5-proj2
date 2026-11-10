@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -24,10 +24,14 @@
 
                 <p class="descricao">Informe seu email para continuar.</p>
 
-                <form action="{{ url_for('auth.recuperar_senha_codigo') }}" method="get">
+                {% if mensagem %}
+                    <p>{{ mensagem }}</p>
+                {% endif %}
+
+                <form action="{{ url_for('auth.recuperar_senha') }}" method="post">
 
                     <label class="label" for="email">E-mail</label>
-                    <input class="input" type="email" id="email" name="email" placeholder="Digite seu E-mail">
+                    <input class="input" type="email" id="email" name="email" placeholder="Digite seu E-mail" required>
 
                     <button class="button" type="submit">Continuar</button>
 
@@ -43,3 +47,4 @@
     </div>
 </body>
 </html>
+```
