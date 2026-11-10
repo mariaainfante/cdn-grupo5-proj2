@@ -1,3 +1,4 @@
+
 {% extends "base_auth.html" %}
 
 {% block title %}Login - Conatus{% endblock %}
@@ -14,16 +15,22 @@ Faça login para continuar monitorando seus projetos.
 
 {% block form_content %}
 <form method="post">
+
     <label class="label" for="usuario">Usuário</label>
     <input class="input" type="text" id="usuario" name="usuario" placeholder="Digite seu usuário">
 
     <label class="label" for="senha">Senha</label>
     <input class="last-input" type="password" id="senha" name="senha" placeholder="Digite sua senha">
 
-    <!-- Replace href values below with url_for('your_endpoint') when these routes exist. -->
-    <p class="esqueci"><a href="recuperar-senha.html">Esqueci minha senha</a></p>
+    <p class="esqueci">
+        <a href="{{ url_for('auth.recuperar_senha') }}">Esqueci minha senha</a>
+    </p>
 
     <button class="button" type="submit">Login</button>
-    <p class="esqueci"><a href="cadastro.html">Não tem conta? Cadastre-se</a></p>
+
+    <p class="esqueci">
+        <a href="{{ url_for('auth.cadastro') }}">Não tem conta? Cadastre-se</a>
+    </p>
+
 </form>
 {% endblock %}

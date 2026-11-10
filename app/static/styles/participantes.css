@@ -1,0 +1,48 @@
+/* CSS só da tela Participantes.
+   O cabeçalho, as cores, a fonte e o .link-azul vêm do gestor.css */
+
+/* Barra azul "Adicionar participante" */
+.barra-adicionar {
+  padding: 10px 16px;
+  background: var(--azul);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.barra-adicionar:hover {
+  background: #264d7f;
+  color: #fff;
+}
+
+/* Cards de participante */
+.participante {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.participante__nome {
+  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.participante dt {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.participante dd {
+  margin-left: 0;
+  padding-left: 26px;
+  margin-bottom: 2px;
+  font-size: 12px;
+}
+
+.participante dl {
+  margin-bottom: 16px;
+}
+
+.aviso {
+  font-size: 12px;
+}

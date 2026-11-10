@@ -1,11 +1,14 @@
+
 from flask import Flask, render_template
 
 app = Flask(__name__)
 
+
 @app.route("/")
 @app.route("/index")
 def index():
-    return render_template("index.html")
+    return render_template("auth/landing-page.html")
+
 
 from app.routes.auth import auth_bp
 from app.routes.dashboard import dashboard_bp

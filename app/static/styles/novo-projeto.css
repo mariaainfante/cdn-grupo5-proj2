@@ -1,0 +1,49 @@
+/* CSS só da tela Novo Projeto.
+   O cabeçalho, as cores e a fonte vêm do gestor.css */
+
+.formulario {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+/* Rótulos dos campos */
+.formulario .form-label {
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--texto);
+}
+
+/* Campos (select, input, textarea) */
+.campo {
+  border: 2px solid var(--azul);
+  border-radius: 4px;
+  font-size: 13px;
+  color: var(--texto);
+}
+
+.campo:focus {
+  border-color: var(--azul);
+  box-shadow: 0 0 0 3px var(--azul-claro);
+}
+
+/* Botão Criar projeto */
+.botao-criar {
+  padding: 12px 22px;
+  background: var(--azul);
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.botao-criar:hover {
+  background: #264d7f;
+}
+
+/* Link Cancelar */
+.cancelar {
+  color: var(--link);
+  font-size: 12px;
+}
