@@ -27,7 +27,7 @@
 
         <nav class="menu d-flex gap-3" aria-label="Principal">
           <a href="{{ url_for('dashboard.gestor') }}" class="menu__link">Projetos</a>
-          <a href="#" class="menu__link menu__link--ativo" aria-current="page">Clientes</a>
+          <a href="{{ url_for('dashboard.clientes') }}" class="menu__link menu__link--ativo" aria-current="page">Clientes</a>
         </nav>
       </div>
 
@@ -60,7 +60,7 @@
 
           <div class="d-flex align-items-center gap-3 mt-4">
             <button type="submit" class="botao-criar">Salvar</button>
-            <a href="{{ url_for('dashboard.gestor') }}" class="cancelar">Cancelar</a>
+            <a href="{{ url_for('dashboard.clientes') }}" class="cancelar">Cancelar</a>
           </div>
 
         </form>

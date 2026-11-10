@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -27,7 +27,7 @@
 
         <nav class="menu d-flex gap-3" aria-label="Principal">
           <a href="{{ url_for('dashboard.gestor') }}" class="menu__link menu__link--ativo" aria-current="page">Projetos</a>
-          <a href="#" class="menu__link">Clientes</a>
+          <a href="{{ url_for('dashboard.clientes') }}" class="menu__link">Clientes</a>
         </nav>
       </div>
 
@@ -47,7 +47,7 @@
 
     <div class="d-flex flex-column align-items-start mb-3">
       <a href="{{ url_for('dashboard.participantes') }}" class="link-azul">Participantes</a>
-      <a href="#" class="link-azul">Editar projeto e estado</a>
+      <a href="{{ url_for('dashboard.editar_projeto') }}" class="link-azul">Editar projeto e estado</a>
     </div>
 
     <section class="dados bg-white border rounded-3 p-3">
@@ -81,3 +81,4 @@
 
 </body>
 </html>
+```

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -27,7 +26,7 @@
 
         <nav class="menu d-flex gap-3" aria-label="Principal">
           <a href="{{ url_for('dashboard.gestor') }}" class="menu__link menu__link--ativo" aria-current="page">Projetos</a>
-          <a href="#" class="menu__link">Clientes</a>
+          <a href="{{ url_for('dashboard.clientes') }}" class="menu__link">Clientes</a>
         </nav>
       </div>
 
@@ -46,7 +45,7 @@
     <h1 class="titulo mb-1">Participantes</h1>
     <p class="subtitulo">Projeto exemplo</p>
 
-    <a href="#" class="barra-adicionar d-block rounded-3 mb-3">Adicionar participante</a>
+    <a href="{{ url_for('dashboard.adicionar_participante') }}" class="barra-adicionar d-block rounded-3 mb-3">Adicionar participante</a>
 
     <section class="participante bg-white border rounded-3 p-3 mb-3">
       <h2 class="participante__nome">Gestor</h2>
@@ -80,8 +79,8 @@
       </dl>
 
       <div class="d-flex gap-3">
-        <a href="#" class="link-azul">Alterar papel</a>
-        <a href="#" class="link-azul">Desativar</a>
+        <a href="{{ url_for('dashboard.alterar_papel') }}" class="link-azul">Alterar papel</a>
+        <a href="{{ url_for('dashboard.desativar_participante') }}" class="link-azul">Desativar</a>
       </div>
     </section>
 
@@ -100,8 +99,8 @@
       </dl>
 
       <div class="d-flex gap-3">
-        <a href="#" class="link-azul">Alterar papel</a>
-        <a href="#" class="link-azul">Desativar</a>
+        <a href="{{ url_for('dashboard.alterar_papel') }}" class="link-azul">Alterar papel</a>
+        <a href="{{ url_for('dashboard.desativar_participante') }}" class="link-azul">Desativar</a>
       </div>
     </section>
 
@@ -109,3 +108,4 @@
 
 </body>
 </html>
+```

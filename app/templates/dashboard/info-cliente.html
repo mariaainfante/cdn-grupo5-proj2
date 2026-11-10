@@ -28,7 +28,7 @@
 
         <nav class="menu d-flex gap-3" aria-label="Principal">
           <a href="{{ url_for('dashboard.gestor') }}" class="menu__link">Projetos</a>
-          <a href="#" class="menu__link menu__link--ativo" aria-current="page">Clientes</a>
+          <a href="{{ url_for('dashboard.clientes') }}" class="menu__link menu__link--ativo" aria-current="page">Clientes</a>
         </nav>
       </div>
 
@@ -42,11 +42,11 @@
 
   <main class="container conteudo py-3 px-3">
 
-    <a href="{{ url_for('dashboard.gestor') }}" class="link-azul d-inline-block mb-3">Voltar para clientes</a>
+   <a href="{{ url_for('dashboard.clientes') }}" class="link-azul d-inline-block mb-3">Voltar para clientes</a>
 
     <h1 class="titulo mb-1">Cliente exemplo</h1>
 
-    <a href="#" class="link-azul d-inline-block mb-4">Editar cliente</a>
+    <a href="{{ url_for('dashboard.editar_cliente') }}" class="link-azul d-inline-block mb-4">Editar cliente</a><a href="#" class="link-azul d-inline-block mb-4">Editar cliente</a>
 
     <section class="dados bg-white border rounded-3 p-3">
       <h2 class="dados__titulo">Dados do cliente</h2>
