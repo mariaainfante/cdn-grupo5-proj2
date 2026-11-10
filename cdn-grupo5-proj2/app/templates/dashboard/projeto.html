@@ -1,0 +1,45 @@
+{% extends "base_dashboard.html" %}
+{% set active_page = 'projetos' %}
+
+{% block title %}Conatus - Projetos{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/projeto.css') }}">
+{% endblock %}
+
+{% block content %}
+  <h1 class="titulo mb-1">{{ projeto.nm_projeto if projeto else 'Projeto' }}</h1>
+
+  {% if erro_banco %}
+    <div class="alert alert-danger">Não foi possível carregar o projeto. Verifique a conexão com o banco de dados.</div>
+  {% elif not projeto %}
+    <div class="alert alert-warning">Nenhum projeto autorizado foi encontrado para este usuário.</div>
+  {% else %}
+  <section class="dados bg-white border rounded-3 p-3">
+    <h2 class="dados__titulo">Dados do projeto</h2>
+
+    <dl class="mb-0">
+      <dt>Nome</dt>
+      <dd>{{ projeto.nm_projeto }}</dd>
+
+      <dt>Descrição</dt>
+      <dd>{{ projeto.desc_projeto }}</dd>
+
+      <dt>Cliente</dt>
+      <dd>{{ projeto.nm_cliente }}</dd>
+
+      <dt>Estado</dt>
+      <dd><span class="selo">{{ projeto.estado_projeto|replace('_', ' ')|title }}</span></dd>
+
+      <dt>Data de criação (UTC)</dt>
+      <dd>{{ projeto.criado_em.strftime('%d/%m/%Y %H:%M:%S') if projeto.criado_em else '—' }}</dd>
+
+      <dt>Início previsto</dt>
+      <dd>{{ projeto.inicio_previsto.strftime('%d/%m/%Y') if projeto.inicio_previsto else '—' }}</dd>
+
+      <dt>Término previsto</dt>
+      <dd>{{ projeto.fim_previsto.strftime('%d/%m/%Y') if projeto.fim_previsto else '—' }}</dd>
+    </dl>
+  </section>
+  {% endif %}
+{% endblock %}
