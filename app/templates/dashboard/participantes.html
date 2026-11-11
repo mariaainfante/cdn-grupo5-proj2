@@ -1,112 +1,152 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Conatus</title>
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/conatus-icone-1024 (1).png') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Conatus</title>
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png"
+          href="{{ url_for('static', filename='img/conatus-icone-1024 (1).png') }}">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles/gestor.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles/participantes.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/comum.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/gestor.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/participantes.css') }}">
 </head>
+
 <body>
 
-  <header class="topo bg-white">
-    <div class="container-fluid px-3 px-md-4 py-2 d-flex flex-wrap align-items-center justify-content-between gap-2">
+<header class="topo">
+    <div class="topo__interno">
 
-      <div class="d-flex flex-wrap align-items-center gap-2 gap-md-4">
-        <a href="{{ url_for('index') }}" aria-label="Conatus">
-          <img src="{{ url_for('static', filename='img/Logoconatus.png') }}" alt="Conatus" class="logo">
+        <a href="{{ url_for('index') }}" class="marca" aria-label="Conatus">
+            <img
+                src="{{ url_for('static', filename='img/Logoconatus.png') }}"
+                alt="Conatus"
+                class="logo"
+            >
         </a>
 
-        <nav class="menu d-flex gap-3" aria-label="Principal">
-          <a href="{{ url_for('dashboard.gestor') }}" class="menu__link menu__link--ativo" aria-current="page">Projetos</a>
-          <a href="{{ url_for('dashboard.clientes') }}" class="menu__link">Clientes</a>
-        </nav>
-      </div>
+        <nav class="menu" aria-label="Navegação principal">
+            <a href="{{ url_for('dashboard.gestor') }}"
+               class="menu__link menu__link--ativo"
+               aria-current="page">
+                Projetos
+            </a>
 
-      <div class="d-flex align-items-center gap-3 gap-md-4">
-        <span class="usuario">Gestor</span>
-        <button type="button" class="botao-sair">Sair</button>
-      </div>
+            <a href="{{ url_for('dashboard.clientes') }}" class="menu__link">
+                Clientes
+            </a>
+        </nav>
+
+        <div class="conta">
+            <span class="usuario">Gestor</span>
+            <button type="button" class="botao-sair">Sair</button>
+        </div>
 
     </div>
-  </header>
+</header>
 
-  <main class="container conteudo py-3 px-3">
+<main class="conteudo">
 
-    <a href="{{ url_for('dashboard.projeto') }}" class="link-azul d-inline-block mb-3">Voltar para o projeto</a>
+    <a href="{{ url_for('dashboard.projeto') }}" class="link-voltar">
+        Voltar para o projeto
+    </a>
 
-    <h1 class="titulo mb-1">Participantes</h1>
-    <p class="subtitulo">Projeto exemplo</p>
+    <div class="cabecalho-participantes">
+        <div>
+            <h1 class="titulo">Participantes</h1>
+            <p>Projeto --nome--</p>
+        </div>
 
-    <a href="{{ url_for('dashboard.adicionar_participante') }}" class="barra-adicionar d-block rounded-3 mb-3">Adicionar participante</a>
+        <a href="{{ url_for('dashboard.adicionar_participante') }}"
+           class="botao-adicionar">
+            Adicionar participante
+        </a>
+    </div>
 
-    <section class="participante bg-white border rounded-3 p-3 mb-3">
-      <h2 class="participante__nome">Gestor</h2>
+    <section class="lista-participantes">
 
-      <dl>
-        <dt>Email</dt>
-        <dd>gestor@example.com</dd>
+        <div class="participante">
+            <div class="participante__principal">
+                <h2 class="participante__nome">Gestor</h2>
+                <span class="participante__situacao">Ativo</span>
+            </div>
 
-        <dt>Papel no projeto</dt>
-        <dd>Gestor</dd>
+            <div class="participante__informacoes">
+                <div>
+                    <span class="participante__rotulo">Email</span>
+                    <span>gestor@example.com</span>
+                </div>
 
-        <dt>Situação</dt>
-        <dd>Ativo</dd>
-      </dl>
+                <div>
+                    <span class="participante__rotulo">Papel no projeto</span>
+                    <span>Gestor</span>
+                </div>
+            </div>
 
-      <p class="aviso mb-0">A desativação ou mudança de papel do último gestor ativo aguarda decisão de negócio.</p>
+            <p class="aviso">
+               Aviso...
+            </p>
+        </div>
+
+        <div class="participante">
+            <div class="participante__principal">
+                <h2 class="participante__nome">Participante</h2>
+                <span class="participante__situacao">Ativo</span>
+            </div>
+
+            <div class="participante__informacoes">
+                <div>
+                    <span class="participante__rotulo">Email</span>
+                    <span>participante@example.com</span>
+                </div>
+
+                <div>
+                    <span class="participante__rotulo">Papel no projeto</span>
+                    <span>Arquiteto</span>
+                </div>
+            </div>
+
+            <div class="participante__acoes">
+                <a href="{{ url_for('dashboard.alterar_papel') }}">Alterar papel</a>
+                <a href="{{ url_for('dashboard.desativar_participante') }}">Desativar</a>
+            </div>
+        </div>
+
+        <div class="participante">
+            <div class="participante__principal">
+                <h2 class="participante__nome">Participante inativo</h2>
+                <span class="participante__situacao participante__situacao--inativo">Inativo</span>
+            </div>
+
+            <div class="participante__informacoes">
+                <div>
+                    <span class="participante__rotulo">Email</span>
+                    <span>participante@example.com</span>
+                </div>
+
+                <div>
+                    <span class="participante__rotulo">Papel no projeto</span>
+                    <span>Arquiteto</span>
+                </div>
+            </div>
+
+            <div class="participante__acoes">
+                <a href="{{ url_for('dashboard.alterar_papel') }}">Alterar papel</a>
+                <a href="{{ url_for('dashboard.desativar_participante') }}">Desativar</a>
+            </div>
+        </div>
+
     </section>
 
-    <section class="participante bg-white border rounded-3 p-3 mb-3">
-      <h2 class="participante__nome">Participante exemplo</h2>
-
-      <dl>
-        <dt>Email</dt>
-        <dd>participante@example.com</dd>
-
-        <dt>Papel no projeto</dt>
-        <dd>Arquiteto</dd>
-
-        <dt>Situação</dt>
-        <dd>Ativo</dd>
-      </dl>
-
-      <div class="d-flex gap-3">
-        <a href="{{ url_for('dashboard.alterar_papel') }}" class="link-azul">Alterar papel</a>
-        <a href="{{ url_for('dashboard.desativar_participante') }}" class="link-azul">Desativar</a>
-      </div>
-    </section>
-
-    <section class="participante bg-white border rounded-3 p-3 mb-3">
-      <h2 class="participante__nome">Participante inativo — exemplo</h2>
-
-      <dl>
-        <dt>Email</dt>
-        <dd>participante@example.com</dd>
-
-        <dt>Papel no projeto</dt>
-        <dd>Arquiteto</dd>
-
-        <dt>Situação</dt>
-        <dd>Inativo</dd>
-      </dl>
-
-      <div class="d-flex gap-3">
-        <a href="{{ url_for('dashboard.alterar_papel') }}" class="link-azul">Alterar papel</a>
-        <a href="{{ url_for('dashboard.desativar_participante') }}" class="link-azul">Desativar</a>
-      </div>
-    </section>
-
-  </main>
+</main>
 
 </body>
 </html>
-```

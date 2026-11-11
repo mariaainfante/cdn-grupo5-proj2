@@ -2,138 +2,196 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Conatus</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/conatus-icone-1024 (1).png') }}">
+    <title>Conatus</title>
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png"
+          href="{{ url_for('static', filename='img/conatus-icone-1024 (1).png') }}">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles/gestor.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles/novo-projeto.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/comum.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/gestor.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/novo-projeto.css') }}">
 </head>
 
 <body>
 
-  <header class="topo bg-white">
-    <div class="container-fluid px-3 px-md-4 py-2 d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <header class="topo">
+        <div class="topo__interno">
 
-      <div class="d-flex flex-wrap align-items-center gap-2 gap-md-4">
-        <a href="{{ url_for('index') }}" aria-label="Conatus">
-          <img src="{{ url_for('static', filename='img/Logoconatus.png') }}" alt="Conatus" class="logo">
-        </a>
+            <a href="{{ url_for('index') }}" class="marca" aria-label="Conatus">
+                <img
+                    src="{{ url_for('static', filename='img/Logoconatus.png') }}"
+                    alt="Conatus"
+                    class="logo"
+                >
+            </a>
 
-        <nav class="menu d-flex gap-3" aria-label="Principal">
-          <a href="{{ url_for('dashboard.gestor') }}" class="menu__link menu__link--ativo" aria-current="page">Projetos</a>
-          <a href="{{ url_for('dashboard.clientes') }}" class="menu__link">Clientes</a>
-        </nav>
-      </div>
+            <nav class="menu" aria-label="Navegação principal">
+                <a href="{{ url_for('dashboard.gestor') }}"
+                   class="menu__link menu__link--ativo"
+                   aria-current="page">
+                    Projetos
+                </a>
 
-      <div class="d-flex align-items-center gap-3 gap-md-4">
-        <span class="usuario">Gestor</span>
-        <button type="button" class="botao-sair">Sair</button>
-      </div>
+                <a href="{{ url_for('dashboard.clientes') }}" class="menu__link">
+                    Clientes
+                </a>
+            </nav>
 
-    </div>
-  </header>
+            <div class="conta">
+                <span class="usuario">Gestor</span>
 
-  <main class="container conteudo py-4 px-3">
+                <button type="button" class="botao-sair">
+                    Sair
+                </button>
+            </div>
 
-    <h1 class="titulo">Novo Projeto</h1>
-    <p class="subtitulo">Selecione o cliente e informe os dados do projeto. O estado inicial será Planejado.</p>
+        </div>
+    </header>
 
-    {% if mensagem %}
-      <div class="alert alert-success" role="alert">
-        {{ mensagem }}
-      </div>
-    {% endif %}
 
-    {% if erro %}
-      <div class="alert alert-danger" role="alert">
-        {{ erro }}
-      </div>
-    {% endif %}
+    <main class="conteudo">
 
-    <div class="row">
-      <div class="col-12 col-md-9 col-lg-6">
+        <div class="introducao">
+            <h1 class="titulo">Novo Projeto</h1>
 
-        <form class="formulario bg-white border rounded-3 p-3 p-md-4"
-              action="{{ url_for('dashboard.novo_projeto') }}"
-              method="POST">
+            <p class="subtitulo">
+                Selecione o cliente e informe os dados do projeto. O estado inicial será Planejado.
+            </p>
+        </div>
 
-          <div class="mb-3">
-            <label for="cliente" class="form-label">Cliente (obrigatório)</label>
 
-            <select id="cliente" name="cliente" class="form-select campo" required>
-              <option value="" {% if not dados or not dados.cliente %}selected{% endif %}>------</option>
-              <option value="1" {% if dados and dados.cliente == '1' %}selected{% endif %}>Cliente exemplo</option>
-            </select>
-          </div>
+        {% if mensagem %}
+            <div class="alert alert-success" role="alert">
+                {{ mensagem }}
+            </div>
+        {% endif %}
 
-          <div class="mb-3">
-            <label for="nome" class="form-label">Nome (obrigatório)</label>
+        {% if erro %}
+            <div class="alert alert-danger" role="alert">
+                {{ erro }}
+            </div>
+        {% endif %}
 
-            <input
-              type="text"
-              id="nome"
-              name="nome"
-              class="form-control campo"
-              value="{{ dados.nome if dados else '' }}"
-              required
+
+        <div class="formulario-container">
+
+            <form
+                class="formulario bg-white border rounded-3 p-3 p-md-4"
+                action="{{ url_for('dashboard.novo_projeto') }}"
+                method="POST"
             >
-          </div>
 
-          <div class="mb-3">
-            <label for="descricao" class="form-label">Descrição (obrigatório)</label>
+                <div class="mb-3">
+                    <label for="cliente" class="form-label">
+                        Cliente (obrigatório)
+                    </label>
 
-            <textarea
-              id="descricao"
-              name="descricao"
-              rows="4"
-              class="form-control campo"
-              required
-            >{{ dados.descricao if dados else '' }}</textarea>
-          </div>
+                    <select
+                        id="cliente"
+                        name="cliente"
+                        class="form-select campo"
+                        required
+                    >
+                        <option value="">Selecione um cliente</option>
 
-          <div class="mb-3">
-            <label for="inicio" class="form-label">Início previsto (opcional)</label>
+                        {% for cliente in clientes %}
+                            <option
+                                value="{{ cliente.id }}"
+                                {% if dados and dados.get('cliente') == cliente.id|string %}selected{% endif %}
+                            >
+                                {{ cliente.nome }}
+                            </option>
+                        {% endfor %}
 
-            <input
-              type="date"
-              id="inicio"
-              name="inicio"
-              class="form-control campo"
-              value="{{ dados.inicio if dados else '' }}"
-            >
-          </div>
+                    </select>
+                </div>
 
-          <div class="mb-3">
-            <label for="termino" class="form-label">Término previsto (opcional)</label>
 
-            <input
-              type="date"
-              id="termino"
-              name="termino"
-              class="form-control campo"
-              value="{{ dados.termino if dados else '' }}"
-            >
-          </div>
+                <div class="mb-3">
+                    <label for="nome" class="form-label">
+                        Nome (obrigatório)
+                    </label>
 
-          <div class="d-flex align-items-center gap-3 mt-4">
-            <button type="submit" class="botao-criar">Criar projeto</button>
-            <a href="{{ url_for('dashboard.gestor') }}" class="cancelar">Cancelar</a>
-          </div>
+                    <input
+                        type="text"
+                        id="nome"
+                        name="nome"
+                        class="form-control campo"
+                        value="{{ dados.get('nome', '') }}"
+                        required
+                    >
+                </div>
 
-        </form>
 
-      </div>
-    </div>
-  </main>
+                <div class="mb-3">
+                    <label for="descricao" class="form-label">
+                        Descrição (obrigatório)
+                    </label>
+
+                    <textarea
+                        id="descricao"
+                        name="descricao"
+                        rows="4"
+                        class="form-control campo"
+                        required
+                    >{{ dados.get('descricao', '') }}</textarea>
+                </div>
+
+
+                <div class="mb-3">
+                    <label for="inicio" class="form-label">
+                        Início previsto (opcional)
+                    </label>
+
+                    <input
+                        type="date"
+                        id="inicio"
+                        name="inicio"
+                        class="form-control campo"
+                        value="{{ dados.get('inicio', '') }}"
+                    >
+                </div>
+
+
+                <div class="mb-3">
+                    <label for="termino" class="form-label">
+                        Término previsto (opcional)
+                    </label>
+
+                    <input
+                        type="date"
+                        id="termino"
+                        name="termino"
+                        class="form-control campo"
+                        value="{{ dados.get('termino', '') }}"
+                    >
+                </div>
+
+
+                <div class="d-flex align-items-center gap-3 mt-4">
+                    <button type="submit" class="botao-criar">
+                        Criar projeto
+                    </button>
+
+                    <a href="{{ url_for('dashboard.gestor') }}" class="cancelar">
+                        Cancelar
+                    </a>
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
 
 </body>
 </html>

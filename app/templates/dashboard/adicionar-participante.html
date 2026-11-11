@@ -2,106 +2,144 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Conatus</title>
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/conatus-icone-1024 (1).png') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Adicionar participante | Conatus</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png"
+          href="{{ url_for('static', filename='img/conatus-icone-1024 (1).png') }}">
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles/gestor.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles/comum.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles/novo-projeto.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/comum.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/gestor.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/novo-projeto.css') }}">
 </head>
+
 <body>
 
-  <header class="topo bg-white">
-    <div class="container-fluid px-3 px-md-4 py-2 d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <header class="topo">
+        <div class="topo__interno">
 
-      <div class="d-flex flex-wrap align-items-center gap-2 gap-md-4">
-        <a href="{{ url_for('index') }}" aria-label="Conatus">
-          <img src="{{ url_for('static', filename='img/Logoconatus.png') }}" alt="Conatus" class="logo">
+            <a href="{{ url_for('index') }}" class="marca" aria-label="Conatus">
+                <img
+                    src="{{ url_for('static', filename='img/Logoconatus.png') }}"
+                    alt="Conatus"
+                    class="logo"
+                >
+            </a>
+
+            <nav class="menu" aria-label="Navegação principal">
+                <a href="{{ url_for('dashboard.gestor') }}"
+                   class="menu__link menu__link--ativo"
+                   aria-current="page">
+                    Projetos
+                </a>
+
+                <a href="{{ url_for('dashboard.clientes') }}" class="menu__link">
+                    Clientes
+                </a>
+            </nav>
+
+            <div class="conta">
+                <span class="usuario">Gestor</span>
+
+                <button type="button" class="botao-sair">
+                    Sair
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <main class="conteudo">
+
+        <a href="{{ url_for('dashboard.participantes') }}" class="link-azul d-inline-block mb-3">
+            Voltar para participantes
         </a>
 
-        <nav class="menu d-flex gap-3" aria-label="Principal">
-          <a href="{{ url_for('dashboard.gestor') }}" class="menu__link menu__link--ativo" aria-current="page">Projetos</a>
-          <a href="{{ url_for('dashboard.clientes') }}" class="menu__link">Clientes</a>
-        </nav>
-      </div>
+        <div class="introducao">
+            <h1 class="titulo">Adicionar participante</h1>
+            <p class="subtitulo">Projeto</p>
+        </div>
 
-      <div class="d-flex align-items-center gap-3 gap-md-4">
-        <span class="usuario">Gestor</span>
-        <button type="button" class="botao-sair">Sair</button>
-      </div>
+        {% if mensagem %}
+            <div class="alert alert-success" role="alert">
+                {{ mensagem }}
+            </div>
+        {% endif %}
 
-    </div>
-  </header>
+        {% if erro %}
+            <div class="alert alert-danger" role="alert">
+                {{ erro }}
+            </div>
+        {% endif %}
 
-  <main class="container conteudo py-3 px-3">
+        <div class="formulario-container">
 
-    <a href="{{ url_for('dashboard.participantes') }}" class="link-azul d-inline-block mb-3">Voltar para participantes</a>
+            <form
+                class="formulario bg-white border rounded-3 p-3 p-md-4"
+                action="{{ url_for('dashboard.adicionar_participante') }}"
+                method="POST"
+            >
 
-    <h1 class="titulo mb-1">Adicionar participante</h1>
-    <p class="subtitulo">Projeto</p>
+                <div class="mb-3">
+                    <label for="usuario" class="form-label">
+                        Usuário existente (obrigatório)
+                    </label>
 
-    {% if mensagem %}
-      <div class="alert alert-success" role="alert">
-        {{ mensagem }}
-      </div>
-    {% endif %}
+                    <select id="usuario" name="usuario" class="form-select campo" required>
+                        <option value="">Selecione um usuário</option>
 
-    {% if erro %}
-      <div class="alert alert-danger" role="alert">
-        {{ erro }}
-      </div>
-    {% endif %}
+                        {% for usuario in usuarios %}
+                            <option
+                                value="{{ usuario.id }}"
+                                {% if dados and dados.usuario == usuario.id|string %}selected{% endif %}
+                            >
+                                {{ usuario.nome }} — {{ usuario.email }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-    <div class="row">
-      <div class="col-12 col-md-9 col-lg-7">
+                <div class="mb-3">
+                    <label for="papel" class="form-label">
+                        Papel no projeto (obrigatório)
+                    </label>
 
-        <form class="formulario bg-white border rounded-3 p-3 p-md-4"
-              action="{{ url_for('dashboard.adicionar_participante') }}"
-              method="POST">
+                    <select id="papel" name="papel" class="form-select campo" required>
+                        <option value="gestor"
+                            {% if not dados or dados.papel == 'gestor' %}selected{% endif %}>
+                            Gestor
+                        </option>
 
-          <div class="mb-3">
-            <label for="usuario" class="form-label">Usuário existente (obrigatório)</label>
+                        <option value="arquiteto"
+                            {% if dados and dados.papel == 'arquiteto' %}selected{% endif %}>
+                            Arquiteto
+                        </option>
+                    </select>
+                </div>
 
-            <select id="usuario" name="usuario" class="form-select campo" required>
-              <option value="">------</option>
+                <div class="d-flex align-items-center gap-3 mt-4">
+                    <button type="submit" class="botao-criar">
+                        Adicionar participante
+                    </button>
 
-              {% for usuario in usuarios %}
-                <option value="{{ usuario.id }}"
-                  {% if dados and dados.usuario == usuario.id|string %}selected{% endif %}>
-                  {{ usuario.nome }} — {{ usuario.email }}
-                </option>
-              {% endfor %}
+                    <a href="{{ url_for('dashboard.participantes') }}" class="cancelar">
+                        Cancelar
+                    </a>
+                </div>
 
-            </select>
-          </div>
+            </form>
 
-          <div class="mb-3">
-            <label for="papel" class="form-label">Papel no projeto (obrigatório)</label>
+        </div>
 
-            <select id="papel" name="papel" class="form-select campo" required>
-              <option value="gestor" {% if not dados or dados.papel == 'gestor' %}selected{% endif %}>Gestor</option>
-              <option value="arquiteto" {% if dados and dados.papel == 'arquiteto' %}selected{% endif %}>Arquiteto</option>
-            </select>
-          </div>
-
-          <div class="d-flex align-items-center gap-3 mt-4">
-            <button type="submit" class="botao-criar">Adicionar participante</button>
-            <a href="{{ url_for('dashboard.participantes') }}" class="cancelar">Cancelar</a>
-          </div>
-
-        </form>
-
-      </div>
-    </div>
-  </main>
+    </main>
 
 </body>
 </html>

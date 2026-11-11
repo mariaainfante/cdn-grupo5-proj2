@@ -2,132 +2,184 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Conatus</title>
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/conatus-icone-1024 (1).png') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Conatus</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png"
+          href="{{ url_for('static', filename='img/conatus-icone-1024 (1).png') }}">
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles/gestor.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles/projeto.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/comum.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/gestor.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/projeto.css') }}">
 </head>
+
 <body>
 
-  <header class="topo bg-white">
-    <div class="container-fluid px-3 px-md-4 py-2 d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <header class="topo">
+        <div class="topo__interno">
 
-      <div class="d-flex flex-wrap align-items-center gap-2 gap-md-4">
-        <a href="{{ url_for('index') }}" aria-label="Conatus">
-          <img src="{{ url_for('static', filename='img/Logoconatus.png') }}" alt="Conatus" class="logo">
+            <a href="{{ url_for('index') }}" class="marca" aria-label="Conatus">
+                <img
+                    src="{{ url_for('static', filename='img/Logoconatus.png') }}"
+                    alt="Conatus"
+                    class="logo"
+                >
+            </a>
+
+            <nav class="menu" aria-label="Navegação principal">
+                <a href="{{ url_for('dashboard.gestor') }}"
+                   class="menu__link menu__link--ativo"
+                   aria-current="page">
+                    Projetos
+                </a>
+
+                <a href="{{ url_for('dashboard.clientes') }}" class="menu__link">
+                    Clientes
+                </a>
+            </nav>
+
+            <div class="conta">
+                <span class="usuario">Gestor</span>
+
+                <button type="button" class="botao-sair">
+                    Sair
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <main class="conteudo">
+
+        <a href="{{ url_for('dashboard.gestor') }}" class="link-voltar">
+            Voltar para Meus Projetos
         </a>
 
-        <nav class="menu d-flex gap-3" aria-label="Principal">
-          <a href="{{ url_for('dashboard.gestor') }}" class="menu__link menu__link--ativo" aria-current="page">Projetos</a>
-          <a href="{{ url_for('dashboard.clientes') }}" class="menu__link">Clientes</a>
-        </nav>
-      </div>
+        <div class="cabecalho-projeto">
+            <h1 class="titulo">Projeto</h1>
 
-      <div class="d-flex align-items-center gap-3 gap-md-4">
-        <span class="usuario">Gestor</span>
-        <button type="button" class="botao-sair">Sair</button>
-      </div>
+            <div class="acoes-projeto">
 
-    </div>
-  </header>
+                <a href="{{ url_for('dashboard.participantes') }}" class="botao-secundario">
+                    Participantes
+                </a>
 
-  <main class="container conteudo py-3 px-3">
+                {% if propriedade %}
+                    <a href="{{ url_for('dashboard.ambientes') }}" class="botao-secundario">
+                        Propriedade e ambientes
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('dashboard.nova_propriedade') }}" class="botao-secundario">
+                        Cadastrar propriedade
+                    </a>
+                {% endif %}
 
-    <a href="{{ url_for('dashboard.gestor') }}" class="link-azul d-inline-block mb-3">Voltar para Meus Projetos</a>
+                <a href="{{ url_for('dashboard.editar_projeto') }}" class="botao-editar">
+                    Editar projeto
+                </a>
 
-    <h1 class="titulo mb-1">Projeto</h1>
+            </div>
+        </div>
 
-    <div class="d-flex flex-column align-items-start mb-3">
+        <section class="dados">
 
-      <a href="{{ url_for('dashboard.participantes') }}" class="link-azul">
-        Participantes
-      </a>
+            <div class="secao-titulo">
+                <h2>Dados do projeto</h2>
+                <span class="selo">Em andamento</span>
+            </div>
 
-      <a href="{{ url_for('dashboard.editar_projeto') }}" class="link-azul">
-        Editar projeto e estado
-      </a>
+            <div class="dados__grade">
 
-      {% if propriedade %}
-        <a href="{{ url_for('dashboard.ambientes') }}" class="link-azul">
-          Ver propriedade e ambientes
-        </a>
-      {% else %}
-        <a href="{{ url_for('dashboard.nova_propriedade') }}" class="link-azul">
-          Cadastrar propriedade
-        </a>
-      {% endif %}
+                <div class="campo-dado">
+                    <span class="campo-dado__rotulo">Nome do projeto</span>
+                    <span class="campo-dado__valor">Projeto exemplo</span>
+                </div>
 
-    </div>
+                <div class="campo-dado">
+                    <span class="campo-dado__rotulo">Cliente</span>
+                    <span class="campo-dado__valor">
+                        <a href="{{ url_for('dashboard.info_cliente') }}" class="link-azul">
+                            Cliente exemplo
+                        </a>
+                    </span>
+                </div>
 
-    <section class="dados bg-white border rounded-3 p-3">
-      <h2 class="dados__titulo">Dados do projeto</h2>
+                <div class="campo-dado">
+                    <span class="campo-dado__rotulo">Data de criação (UTC)</span>
+                    <span class="campo-dado__valor">28/10/2026 07:00:00</span>
+                </div>
 
-      <dl class="mb-0">
-        <dt>Nome</dt>
-        <dd>Projeto exemplo</dd>
+                <div class="campo-dado">
+                    <span class="campo-dado__rotulo">Início previsto</span>
+                    <span class="campo-dado__valor">28/10/2026</span>
+                </div>
 
-        <dt>Descrição</dt>
-        <dd>Projeto ilustrativo de automação residencial. Dados fictícios para visualização do layout.</dd>
+                <div class="campo-dado">
+                    <span class="campo-dado__rotulo">Término previsto</span>
+                    <span class="campo-dado__valor">18/12/2026</span>
+                </div>
 
-        <dt>Cliente</dt>
-        <dd>
-          <a href="{{ url_for('dashboard.info_cliente') }}" class="link-azul">
-            Cliente exemplo
-          </a>
-        </dd>
+                <div class="campo-dado campo-dado--completo">
+                    <span class="campo-dado__rotulo">Descrição</span>
+                    <span class="campo-dado__valor">
+                        Projeto ilustrativo de automação residencial. Dados fictícios para visualização do layout.
+                    </span>
+                </div>
 
-        <dt>Estado</dt>
-        <dd><span class="selo">Em andamento</span></dd>
+            </div>
 
-        <dt>Data de criação (UTC)</dt>
-        <dd>28/10/2026 07:00:00</dd>
+        </section>
 
-        <dt>Início previsto</dt>
-        <dd>28/10/2026</dd>
+        {% if propriedade %}
 
-        <dt>Término previsto</dt>
-        <dd>18/12/2026</dd>
-      </dl>
-    </section>
+            <section class="dados dados--propriedade">
 
-    <!-- Dados da propriedade -->
-    {% if propriedade %}
+                <div class="secao-titulo">
+                    <h2>Propriedade</h2>
+                </div>
 
-    <section class="dados bg-white border rounded-3 p-3 mt-4">
+                <div class="dados__grade">
 
-      <h2 class="dados__titulo">Propriedade</h2>
+                    <div class="campo-dado">
+                        <span class="campo-dado__rotulo">Nome</span>
+                        <span class="campo-dado__valor">{{ propriedade.nome }}</span>
+                    </div>
 
-      <dl class="mb-0">
-        <dt>Nome</dt>
-        <dd>{{ propriedade.nome }}</dd>
+                    <div class="campo-dado">
+                        <span class="campo-dado__rotulo">Tipo</span>
+                        <span class="campo-dado__valor">{{ propriedade.tipo }}</span>
+                    </div>
 
-        <dt>Tipo</dt>
-        <dd>{{ propriedade.tipo }}</dd>
+                    <div class="campo-dado">
+                        <span class="campo-dado__rotulo">Endereço</span>
+                        <span class="campo-dado__valor">{{ propriedade.endereco }}</span>
+                    </div>
 
-        <dt>Endereço</dt>
-        <dd>{{ propriedade.endereco }}</dd>
+                    <div class="campo-dado">
+                        <span class="campo-dado__rotulo">Cidade</span>
+                        <span class="campo-dado__valor">{{ propriedade.cidade }}</span>
+                    </div>
 
-        <dt>Cidade</dt>
-        <dd>{{ propriedade.cidade }}</dd>
+                    <div class="campo-dado">
+                        <span class="campo-dado__rotulo">Área</span>
+                        <span class="campo-dado__valor">{{ propriedade.area }} m²</span>
+                    </div>
 
-        <dt>Área</dt>
-        <dd>{{ propriedade.area }} m²</dd>
-      </dl>
+                </div>
 
-    </section>
+            </section>
 
-    {% endif %}
+        {% endif %}
 
-  </main>
+    </main>
 
 </body>
 </html>

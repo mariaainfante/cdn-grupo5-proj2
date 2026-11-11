@@ -1,109 +1,173 @@
-/* ---------- Variáveis ---------- */
-:root {
-  --fundo: #f1eee6;
-  --azul: #2f5f9a;
-  --azul-claro: #e6eef6;
-  --texto: #222a2e;
-  --texto-suave: #5b6266;
-  --link: #0000ee;
-}
 
-/* ---------- Base (sobrescreve o Bootstrap) ---------- */
-body {
-  background: var(--fundo);
-  color: var(--texto);
-  font-family: "Inter", system-ui, sans-serif;
-  font-size: 14px;
-}
+/* Conteúdo */
 
-/* ---------- Cabeçalho ---------- */
-.logo {
-  height: 45px;
-  width: auto;
-}
-
-.menu__link {
-  padding: 8px 0 6px;
-  border-bottom: 2px solid transparent;
-  color: var(--azul);
-  font-size: 15px;
-  font-weight: 500;
-  text-decoration: none;
-}
-
-.menu__link--ativo {
-  color: var(--texto);
-  font-weight: 600;
-  border-bottom-color: var(--azul);
-}
-
-.usuario {
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.botao-sair {
-  padding: 10px 22px;
-  background: #fff;
-  border: 2px solid var(--azul);
-  border-radius: 8px;
-  color: var(--azul);
-  font-family: inherit;
-  font-size: 15px;
-  font-weight: 500;
-}
-
-.botao-sair:hover {
-  background: var(--azul);
-  color: #fff;
-}
-
-/* ---------- Conteúdo ---------- */
 .conteudo {
-  max-width: 1000px;
+    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 42px 24px 60px;
+}
+
+.introducao {
+    margin-bottom: 22px;
 }
 
 .titulo {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 8px;
+    margin: 0 0 6px;
+    font-size: 25px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
 }
 
 .subtitulo {
-  color: var(--texto-suave);
-  margin-bottom: 16px;
+    margin: 0;
+    color: var(--texto-suave);
+    font-size: 13px;
 }
 
-.novo-projeto,
-.link-projeto {
-  color: var(--link);
+/* Botão de cadastro */
+
+.projetos__topo {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 18px;
 }
 
-/* ---------- Lista (no lugar da tabela) ---------- */
+.novo-projeto {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 39px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 5px;
+    background: var(--azul);
+    color: #fff;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.novo-projeto:hover {
+    background: #244d7d;
+    color: #fff;
+}
+
+/* Lista */
+
+.lista {
+    overflow: hidden;
+    border: 1px solid #deddd7;
+    border-radius: 5px;
+    background: #fff;
+}
+
+.lista__cabecalho,
+.lista__item {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1.2fr 1fr;
+    align-items: center;
+    column-gap: 16px;
+    padding: 15px 20px;
+}
+
 .lista__cabecalho {
-  background: var(--azul-claro);
-  font-size: 12px;
-  font-weight: 600;
+    min-height: 44px;
+    background: var(--azul-claro);
+    color: var(--texto);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.lista__item {
+    min-height: 62px;
+    border-top: 1px solid #e8e7e2;
+    font-size: 13px;
 }
 
 .lista__item > div {
-  padding: 4px 0;
+    min-width: 0;
 }
 
-/* Rótulo que aparece só no celular (Nome, Cliente...) */
+/* Lista de clientes */
+
+.lista--clientes .lista__cabecalho,
+.lista--clientes .lista__item {
+    grid-template-columns: 1fr 1fr;
+}
+
+/* Links */
+
+.link-projeto {
+    color: var(--azul);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.link-projeto:hover {
+    text-decoration: underline;
+}
+
+/* Rótulos para celular */
+
 .rotulo {
-  display: block;
-  color: var(--texto-suave);
-  font-size: 12px;
-  font-weight: 600;
+    display: none;
 }
 
-.selo {
-  display: inline-block;
-  padding: 6px 10px;
-  background: var(--azul-claro);
-  border-radius: 6px;
-  color: var(--azul);
-  font-size: 12px;
-  font-weight: 600;
+/* Lista vazia */
+
+.lista__vazia {
+    padding: 18px 20px;
+    border-top: 1px solid #e8e7e2;
+    color: var(--texto-suave);
+    font-size: 13px;
+}
+
+/* Celular */
+
+@media (max-width: 767px) {
+
+    .conteudo {
+        padding: 30px 18px 40px;
+    }
+
+    .titulo {
+        font-size: 23px;
+    }
+
+    .projetos__topo {
+        justify-content: flex-start;
+    }
+
+    .novo-projeto {
+        width: 100%;
+    }
+
+    .lista__cabecalho {
+        display: none;
+    }
+
+    .lista__item {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 13px;
+        padding: 17px;
+    }
+
+    .lista__campo {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .rotulo {
+        display: block;
+        color: var(--texto-suave);
+        font-size: 11px;
+        font-weight: 600;
+    }
 }

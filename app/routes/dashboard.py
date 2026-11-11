@@ -5,6 +5,19 @@ dashboard_bp = Blueprint("dashboard", __name__)
 
 
 # ==================================================
+# CLIENTES DE EXEMPLO
+# ==================================================
+
+CLIENTES_EXEMPLO = [
+    {
+        "id": 1,
+        "nome": "Cliente exemplo",
+        "contato": "contato@example.com"
+    }
+]
+
+
+# ==================================================
 # TELA PRINCIPAL DO GESTOR
 # ==================================================
 
@@ -28,6 +41,8 @@ def novo_projeto():
     erro = None
     dados = {}
 
+    clientes = CLIENTES_EXEMPLO
+
     if request.method == "POST":
         dados = request.form
 
@@ -37,8 +52,13 @@ def novo_projeto():
         inicio = request.form.get("inicio", "").strip()
         termino = request.form.get("termino", "").strip()
 
+        ids_clientes = [str(c["id"]) for c in clientes]
+
         if not cliente or not nome or not descricao:
             erro = "Preencha todos os campos obrigatórios."
+
+        elif cliente not in ids_clientes:
+            erro = "Selecione um cliente válido."
 
         elif inicio and termino and termino < inicio:
             erro = "A data de término não pode ser anterior à data de início."
@@ -48,6 +68,7 @@ def novo_projeto():
 
     return render_template(
         "dashboard/novo-projeto.html",
+        clientes=clientes,
         mensagem=mensagem,
         erro=erro,
         dados=dados
@@ -192,16 +213,9 @@ def desativar_participante():
 
 @dashboard_bp.get("/clientes")
 def clientes():
-    clientes = [
-        {
-            "nome": "Cliente exemplo",
-            "contato": "contato@example.com"
-        }
-    ]
-
     return render_template(
         "dashboard/clientes.html",
-        clientes=clientes
+        clientes=CLIENTES_EXEMPLO
     )
 
 
@@ -233,7 +247,12 @@ def novo_cliente():
 
 @dashboard_bp.get("/info-cliente")
 def info_cliente():
-    return render_template("dashboard/info-cliente.html")
+    cliente = CLIENTES_EXEMPLO[0]
+
+    return render_template(
+        "dashboard/info-cliente.html",
+        cliente=cliente
+    )
 
 
 @dashboard_bp.route("/editar-cliente", methods=["GET", "POST"])
