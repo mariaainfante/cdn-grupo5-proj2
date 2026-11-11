@@ -47,21 +47,39 @@
     <a href="{{ url_for('dashboard.novo_cliente') }}" class="link-azul d-inline-block mb-3">Novo cliente</a>
 
     <div class="lista bg-white rounded-3 border overflow-hidden">
+
       <div class="lista__cabecalho row g-0 px-3 py-3 d-none d-md-flex">
         <div class="col-md-6">Nome</div>
         <div class="col-md-6">Contato</div>
       </div>
 
-      <div class="lista__item row g-0 px-3 py-3 border-top align-items-center">
-        <div class="col-12 col-md-6">
-          <span class="rotulo d-md-none">Nome</span>
-          <a href="{{ url_for('dashboard.info_cliente') }}" class="link-projeto fw-bold">Cliente</a>
+      {% if clientes %}
+
+        {% for cliente in clientes %}
+          <div class="lista__item row g-0 px-3 py-3 border-top align-items-center">
+
+            <div class="col-12 col-md-6">
+              <span class="rotulo d-md-none">Nome</span>
+              <a href="{{ url_for('dashboard.info_cliente') }}" class="link-projeto fw-bold">
+                {{ cliente.nome }}
+              </a>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <span class="rotulo d-md-none">Contato</span>
+              {{ cliente.contato or 'Não informado' }}
+            </div>
+
+          </div>
+        {% endfor %}
+
+      {% else %}
+
+        <div class="p-3 border-top">
+          Nenhum cliente cadastrado.
         </div>
-        <div class="col-12 col-md-6">
-          <span class="rotulo d-md-none">Contato</span>
-          contato@example.com
-        </div>
-      </div>
+
+      {% endif %}
 
     </div>
   </main>

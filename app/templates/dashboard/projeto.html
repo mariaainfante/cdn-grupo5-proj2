@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -46,8 +47,25 @@
     <h1 class="titulo mb-1">Projeto</h1>
 
     <div class="d-flex flex-column align-items-start mb-3">
-      <a href="{{ url_for('dashboard.participantes') }}" class="link-azul">Participantes</a>
-      <a href="{{ url_for('dashboard.editar_projeto') }}" class="link-azul">Editar projeto e estado</a>
+
+      <a href="{{ url_for('dashboard.participantes') }}" class="link-azul">
+        Participantes
+      </a>
+
+      <a href="{{ url_for('dashboard.editar_projeto') }}" class="link-azul">
+        Editar projeto e estado
+      </a>
+
+      {% if propriedade %}
+        <a href="{{ url_for('dashboard.ambientes') }}" class="link-azul">
+          Ver propriedade e ambientes
+        </a>
+      {% else %}
+        <a href="{{ url_for('dashboard.nova_propriedade') }}" class="link-azul">
+          Cadastrar propriedade
+        </a>
+      {% endif %}
+
     </div>
 
     <section class="dados bg-white border rounded-3 p-3">
@@ -61,7 +79,11 @@
         <dd>Projeto ilustrativo de automação residencial. Dados fictícios para visualização do layout.</dd>
 
         <dt>Cliente</dt>
-        <dd><a href="{{ url_for('dashboard.info_cliente') }}" class="link-azul">Cliente exemplo</a></dd>
+        <dd>
+          <a href="{{ url_for('dashboard.info_cliente') }}" class="link-azul">
+            Cliente exemplo
+          </a>
+        </dd>
 
         <dt>Estado</dt>
         <dd><span class="selo">Em andamento</span></dd>
@@ -76,6 +98,34 @@
         <dd>18/12/2026</dd>
       </dl>
     </section>
+
+    <!-- Dados da propriedade -->
+    {% if propriedade %}
+
+    <section class="dados bg-white border rounded-3 p-3 mt-4">
+
+      <h2 class="dados__titulo">Propriedade</h2>
+
+      <dl class="mb-0">
+        <dt>Nome</dt>
+        <dd>{{ propriedade.nome }}</dd>
+
+        <dt>Tipo</dt>
+        <dd>{{ propriedade.tipo }}</dd>
+
+        <dt>Endereço</dt>
+        <dd>{{ propriedade.endereco }}</dd>
+
+        <dt>Cidade</dt>
+        <dd>{{ propriedade.cidade }}</dd>
+
+        <dt>Área</dt>
+        <dd>{{ propriedade.area }} m²</dd>
+      </dl>
+
+    </section>
+
+    {% endif %}
 
   </main>
 

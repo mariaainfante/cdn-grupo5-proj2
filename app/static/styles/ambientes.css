@@ -1,0 +1,118 @@
+/* Resumo da propriedade */
+.resumo-propriedade {
+    padding: 18px 22px;
+    background: #e6eef6;
+    border: 1px solid #d1deed;
+    border-radius: 10px;
+}
+.resumo-propriedade__rotulo {
+    display: block;
+    margin-bottom: 5px;
+    color: #5b6266;
+    font-size: 13px;
+}
+.resumo-propriedade__nome {
+    margin-bottom: 5px;
+    color: #222a2e;
+    font-size: 18px;
+    font-weight: 700;
+}
+.resumo-propriedade__endereco {
+    color: #5b6266;
+    font-size: 13px;
+}
+
+/* Lista de ambientes */
+.lista-ambientes {
+    padding: 24px;
+    background: #fff;
+    border: 1px solid #dedede;
+    border-radius: 10px;
+}
+.lista-ambientes__topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+.lista-ambientes__titulo {
+    margin-bottom: 5px;
+    color: #222a2e;
+    font-size: 19px;
+    font-weight: 700;
+}
+.lista-ambientes__descricao {
+    margin-bottom: 0;
+    color: #5b6266;
+    font-size: 13px;
+}
+.botao-novo-ambiente {
+    padding: 10px 16px;
+    background: #2f5f9a;
+    border: 1px solid #2f5f9a;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.botao-novo-ambiente:hover {
+    background: #244c7c;
+    color: #fff;
+}
+.tabela-ambientes__cabecalho,
+.tabela-ambientes__item {
+    display: grid;
+    grid-template-columns: 1.2fr .8fr .6fr 1.5fr .8fr;
+    gap: 14px;
+    align-items: center;
+}
+.tabela-ambientes__cabecalho {
+    padding: 13px 12px;
+    background: #e6eef6;
+    color: #222a2e;
+    font-size: 12px;
+    font-weight: 700;
+}
+.tabela-ambientes__item {
+    padding: 17px 12px;
+    border-bottom: 1px solid #e7e7e7;
+    color: #333b40;
+    font-size: 13px;
+}
+.tabela-ambientes__item:last-child { border-bottom: 0; }
+.rotulo-ambiente { display: none; }
+.acoes-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.acoes-lista a {
+    color: #2f5f9a;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+}
+.acoes-lista a:hover { text-decoration: underline; }
+
+@media (max-width: 700px) {
+    .lista-ambientes__topo {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+    .tabela-ambientes__cabecalho { display: none; }
+    .tabela-ambientes__item {
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        padding: 18px 8px;
+    }
+    .rotulo-ambiente {
+        display: block;
+        margin-bottom: 4px;
+        color: #5b6266;
+        font-size: 11px;
+        font-weight: 600;
+    }
+}

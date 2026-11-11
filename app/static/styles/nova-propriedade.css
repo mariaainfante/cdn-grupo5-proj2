@@ -1,0 +1,97 @@
+/* Projeto vinculado */
+.propriedade-vinculada {
+    padding: 18px 22px;
+    background: #e6eef6;
+    border: 1px solid #d1deed;
+    border-radius: 10px;
+}
+.propriedade-vinculada__rotulo {
+    display: block;
+    margin-bottom: 5px;
+    color: #5b6266;
+    font-size: 13px;
+    font-weight: 500;
+}
+.propriedade-vinculada__nome {
+    margin-bottom: 5px;
+    color: #222a2e;
+    font-size: 18px;
+    font-weight: 700;
+}
+.propriedade-vinculada__descricao {
+    color: #5b6266;
+    font-size: 13px;
+}
+
+/* Formulário */
+.formulario-propriedade {
+    padding: 24px;
+    background: #fff;
+    border: 1px solid #dedede;
+    border-radius: 10px;
+}
+.formulario-propriedade__titulo {
+    margin-bottom: 22px;
+    color: #222a2e;
+    font-size: 19px;
+    font-weight: 700;
+}
+.formulario-propriedade .form-label {
+    margin-bottom: 8px;
+    color: #222a2e;
+    font-size: 14px;
+    font-weight: 600;
+}
+.obrigatorio { color: #c0392b; }
+.formulario-propriedade .form-control,
+.formulario-propriedade .form-select {
+    min-height: 44px;
+    border: 1px solid #c9ced6;
+    border-radius: 7px;
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 14px;
+}
+.formulario-propriedade .form-control:focus,
+.formulario-propriedade .form-select:focus {
+    border-color: #2f5f9a;
+    box-shadow: 0 0 0 3px rgba(47, 95, 154, 0.12);
+}
+.formulario-propriedade textarea.form-control {
+    min-height: 110px;
+    resize: vertical;
+}
+.formulario-propriedade .form-control::placeholder { color: #92999f; }
+.formulario-propriedade .form-text {
+    display: block;
+    margin-top: 6px;
+    color: #737b80;
+    font-size: 12px;
+}
+.acoes-propriedade {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    margin-top: 25px;
+}
+.botao-salvar-propriedade {
+    padding: 11px 22px;
+    background: #2f5f9a;
+    border: 2px solid #2f5f9a;
+    border-radius: 8px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.botao-salvar-propriedade:hover {
+    background: #244c7c;
+    border-color: #244c7c;
+}
+.botao-cancelar-propriedade {
+    color: #2f5f9a;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+}
+.botao-cancelar-propriedade:hover { text-decoration: underline; }
