@@ -429,3 +429,128 @@ def novo_ambiente():
         erro=erro,
         dados=dados
     )
+
+
+# ==================================================
+# HISTÓRICO DO PROJETO
+# ==================================================
+
+@dashboard_bp.get("/historico")
+def historico():
+    projeto = {
+        "nome": "Projeto exemplo"
+    }
+
+    historico_projeto = []
+
+    return render_template(
+        "dashboard/historico.html",
+        projeto=projeto,
+        historico=historico_projeto
+    )
+
+
+# ==================================================
+# NOVO EVENTO
+# ==================================================
+
+@dashboard_bp.route("/novo-evento", methods=["GET", "POST"])
+def novo_evento():
+    mensagem = None
+    erro = None
+    dados = {}
+
+    projeto = {
+        "nome": "Projeto exemplo"
+    }
+
+    if request.method == "POST":
+        dados = request.form
+
+        titulo = request.form.get("titulo", "").strip()
+        data = request.form.get("data", "").strip()
+        descricao = request.form.get("descricao", "").strip()
+
+        if not titulo or not data or not descricao:
+            erro = "Preencha todos os campos obrigatórios."
+
+        else:
+            mensagem = "Evento recebido e validado com sucesso!"
+
+    return render_template(
+        "dashboard/novo-evento.html",
+        projeto=projeto,
+        mensagem=mensagem,
+        erro=erro,
+        dados=dados
+    )
+
+
+# ==================================================
+# NOVO COMENTÁRIO
+# ==================================================
+
+@dashboard_bp.route("/novo-comentario", methods=["GET", "POST"])
+def novo_comentario():
+    mensagem = None
+    erro = None
+    dados = {}
+
+    projeto = {
+        "nome": "Projeto exemplo"
+    }
+
+    if request.method == "POST":
+        dados = request.form
+
+        comentario = request.form.get("comentario", "").strip()
+
+        if not comentario:
+            erro = "Escreva um comentário antes de publicar."
+
+        else:
+            mensagem = "Comentário recebido e validado com sucesso!"
+
+    return render_template(
+        "dashboard/novo-comentario.html",
+        projeto=projeto,
+        mensagem=mensagem,
+        erro=erro,
+        dados=dados
+    )
+
+
+# ==================================================
+# NOVA DECISÃO
+# ==================================================
+
+@dashboard_bp.route("/nova-decisao", methods=["GET", "POST"])
+def nova_decisao():
+    mensagem = None
+    erro = None
+    dados = {}
+
+    projeto = {
+        "nome": "Projeto exemplo"
+    }
+
+    if request.method == "POST":
+        dados = request.form
+
+        titulo = request.form.get("titulo", "").strip()
+        descricao = request.form.get("descricao", "").strip()
+        data = request.form.get("data", "").strip()
+
+        if not titulo or not descricao or not data:
+            erro = "Preencha todos os campos obrigatórios."
+
+        else:
+            mensagem = "Decisão recebida e validada com sucesso!"
+
+    return render_template(
+        "dashboard/nova-decisao.html",
+        projeto=projeto,
+        mensagem=mensagem,
+        erro=erro,
+        dados=dados
+    )
