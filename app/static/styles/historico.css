@@ -1,0 +1,143 @@
+
+/* ---------- Ações do histórico ---------- */
+
+.historico__acoes {
+    display: flex;
+    gap: 10px;
+    margin: 28px 0;
+    flex-wrap: wrap;
+}
+
+.historico__acoes .botao-secundario {
+    display: inline-block;
+    padding: 10px 16px;
+    border: 1px solid var(--azul);
+    border-radius: 6px;
+    color: var(--azul);
+    background: transparent;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+}
+
+.historico__acoes .botao-secundario:hover {
+    background: var(--azul);
+    color: #fff;
+}
+
+
+/* ---------- Lista de registros ---------- */
+
+.historico {
+    margin-top: 36px;
+}
+
+.historico__titulo {
+    margin-bottom: 18px;
+    color: var(--texto);
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.historico__lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+
+/* ---------- Registro ---------- */
+
+.registro {
+    display: flex;
+    gap: 16px;
+    padding: 22px 0;
+    border-bottom: 1px solid #deded8;
+}
+
+.registro:first-child {
+    border-top: 1px solid #deded8;
+}
+
+.registro__marcador {
+    width: 9px;
+    height: 9px;
+    min-width: 9px;
+    margin-top: 6px;
+    border-radius: 50%;
+    background: var(--azul);
+}
+
+.registro__conteudo {
+    flex: 1;
+    min-width: 0;
+}
+
+.registro__cabecalho {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 9px;
+    flex-wrap: wrap;
+}
+
+.registro__tipo {
+    color: var(--texto);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.registro__data {
+    color: var(--muted, #777);
+    font-size: 12px;
+}
+
+.registro__descricao {
+    margin: 0 0 9px;
+    color: var(--texto);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.registro__responsavel {
+    color: var(--muted, #777);
+    font-size: 11px;
+}
+
+
+/* ---------- Histórico vazio ---------- */
+
+.historico__vazio {
+    padding: 24px 0;
+    border-top: 1px solid #deded8;
+    border-bottom: 1px solid #deded8;
+}
+
+.historico__vazio p {
+    margin: 0;
+    color: var(--muted, #777);
+    font-size: 13px;
+}
+
+
+/* ---------- Responsividade ---------- */
+
+@media (max-width: 600px) {
+    .historico__acoes {
+        gap: 8px;
+    }
+
+    .historico__acoes .botao-secundario {
+        padding: 9px 12px;
+        font-size: 12px;
+    }
+
+    .registro {
+        gap: 12px;
+    }
+
+    .registro__cabecalho {
+        gap: 8px;
+    }
+}

@@ -1,5 +1,5 @@
 
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, abort
 
 dashboard_bp = Blueprint("dashboard", __name__)
 
@@ -18,6 +18,54 @@ CLIENTES_EXEMPLO = [
 
 
 # ==================================================
+# PROJETOS DE EXEMPLO
+# ==================================================
+
+PROJETOS_EXEMPLO = [
+    {
+        "id": 1,
+        "nome": "Projeto exemplo",
+        "cliente": "Cliente exemplo"
+    }
+]
+
+
+# ==================================================
+# HISTÓRICO DOS PROJETOS
+# ==================================================
+
+HISTORICO_PROJETOS = {
+    1: []
+}
+
+
+# ==================================================
+# FUNÇÕES AUXILIARES
+# ==================================================
+
+def buscar_projeto(projeto_id):
+    for projeto in PROJETOS_EXEMPLO:
+        if projeto["id"] == projeto_id:
+            return projeto
+
+    abort(404)
+
+
+def adicionar_historico(projeto_id, tipo, data, descricao):
+    if projeto_id not in HISTORICO_PROJETOS:
+        HISTORICO_PROJETOS[projeto_id] = []
+
+    registro = {
+        "tipo": tipo,
+        "data": data,
+        "descricao": descricao,
+        "responsavel": "Gestor"
+    }
+
+    HISTORICO_PROJETOS[projeto_id].append(registro)
+
+
+# ==================================================
 # TELA PRINCIPAL DO GESTOR
 # ==================================================
 
@@ -31,8 +79,15 @@ def gestor():
 # ==================================================
 
 @dashboard_bp.get("/projeto")
-def projeto():
-    return render_template("dashboard/projeto.html")
+@dashboard_bp.get("/projeto/<int:projeto_id>")
+def projeto(projeto_id=1):
+    projeto_atual = buscar_projeto(projeto_id)
+
+    return render_template(
+        "dashboard/projeto.html",
+        projeto=projeto_atual,
+        propriedade=None
+    )
 
 
 @dashboard_bp.route("/novo-projeto", methods=["GET", "POST"])
@@ -436,16 +491,15 @@ def novo_ambiente():
 # ==================================================
 
 @dashboard_bp.get("/historico")
-def historico():
-    projeto = {
-        "nome": "Projeto exemplo"
-    }
+@dashboard_bp.get("/projeto/<int:projeto_id>/historico")
+def historico(projeto_id=1):
+    projeto_atual = buscar_projeto(projeto_id)
 
-    historico_projeto = []
+    historico_projeto = HISTORICO_PROJETOS.get(projeto_id, [])
 
     return render_template(
         "dashboard/historico.html",
-        projeto=projeto,
+        projeto=projeto_atual,
         historico=historico_projeto
     )
 
@@ -455,14 +509,16 @@ def historico():
 # ==================================================
 
 @dashboard_bp.route("/novo-evento", methods=["GET", "POST"])
-def novo_evento():
+@dashboard_bp.route(
+    "/projeto/<int:projeto_id>/novo-evento",
+    methods=["GET", "POST"]
+)
+def novo_evento(projeto_id=1):
     mensagem = None
     erro = None
     dados = {}
 
-    projeto = {
-        "nome": "Projeto exemplo"
-    }
+    projeto_atual = buscar_projeto(projeto_id)
 
     if request.method == "POST":
         dados = request.form
@@ -475,11 +531,19 @@ def novo_evento():
             erro = "Preencha todos os campos obrigatórios."
 
         else:
-            mensagem = "Evento recebido e validado com sucesso!"
+            adicionar_historico(
+                projeto_id,
+                "Evento",
+                data,
+                f"{titulo}: {descricao}"
+            )
+
+            mensagem = "Evento registrado com sucesso!"
 
     return render_template(
         "dashboard/novo-evento.html",
-        projeto=projeto,
+        projeto=projeto_atual,
+        projeto_id=projeto_id,
         mensagem=mensagem,
         erro=erro,
         dados=dados
@@ -491,14 +555,16 @@ def novo_evento():
 # ==================================================
 
 @dashboard_bp.route("/novo-comentario", methods=["GET", "POST"])
-def novo_comentario():
+@dashboard_bp.route(
+    "/projeto/<int:projeto_id>/novo-comentario",
+    methods=["GET", "POST"]
+)
+def novo_comentario(projeto_id=1):
     mensagem = None
     erro = None
     dados = {}
 
-    projeto = {
-        "nome": "Projeto exemplo"
-    }
+    projeto_atual = buscar_projeto(projeto_id)
 
     if request.method == "POST":
         dados = request.form
@@ -509,11 +575,19 @@ def novo_comentario():
             erro = "Escreva um comentário antes de publicar."
 
         else:
-            mensagem = "Comentário recebido e validado com sucesso!"
+            adicionar_historico(
+                projeto_id,
+                "Comentário",
+                "",
+                comentario
+            )
+
+            mensagem = "Comentário registrado com sucesso!"
 
     return render_template(
         "dashboard/novo-comentario.html",
-        projeto=projeto,
+        projeto=projeto_atual,
+        projeto_id=projeto_id,
         mensagem=mensagem,
         erro=erro,
         dados=dados
@@ -525,14 +599,16 @@ def novo_comentario():
 # ==================================================
 
 @dashboard_bp.route("/nova-decisao", methods=["GET", "POST"])
-def nova_decisao():
+@dashboard_bp.route(
+    "/projeto/<int:projeto_id>/nova-decisao",
+    methods=["GET", "POST"]
+)
+def nova_decisao(projeto_id=1):
     mensagem = None
     erro = None
     dados = {}
 
-    projeto = {
-        "nome": "Projeto exemplo"
-    }
+    projeto_atual = buscar_projeto(projeto_id)
 
     if request.method == "POST":
         dados = request.form
@@ -545,11 +621,19 @@ def nova_decisao():
             erro = "Preencha todos os campos obrigatórios."
 
         else:
-            mensagem = "Decisão recebida e validada com sucesso!"
+            adicionar_historico(
+                projeto_id,
+                "Decisão",
+                data,
+                f"{titulo}: {descricao}"
+            )
+
+            mensagem = "Decisão registrada com sucesso!"
 
     return render_template(
         "dashboard/nova-decisao.html",
-        projeto=projeto,
+        projeto=projeto_atual,
+        projeto_id=projeto_id,
         mensagem=mensagem,
         erro=erro,
         dados=dados

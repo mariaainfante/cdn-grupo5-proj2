@@ -59,14 +59,16 @@
 
     <main class="conteudo">
 
-        <a href="{{ url_for('dashboard.historico') }}" class="link-azul d-inline-block mb-3">
+        <a href="{{ url_for('dashboard.historico', projeto_id=projeto.id) }}"
+           class="link-azul d-inline-block mb-3">
             Voltar para o histórico
         </a>
 
         <div class="introducao">
             <h1 class="titulo">Novo evento</h1>
+
             <p class="subtitulo">
-                {{ projeto.nome if projeto else 'Projeto exemplo' }}
+                {{ projeto.nome }}
             </p>
         </div>
 
@@ -86,7 +88,7 @@
 
             <form
                 class="formulario bg-white border rounded-3 p-3 p-md-4"
-                action="{{ url_for('dashboard.novo_evento') }}"
+                action="{{ url_for('dashboard.novo_evento', projeto_id=projeto.id) }}"
                 method="POST"
             >
 
@@ -141,7 +143,8 @@
                         Salvar evento
                     </button>
 
-                    <a href="{{ url_for('dashboard.historico') }}" class="cancelar">
+                    <a href="{{ url_for('dashboard.historico', projeto_id=projeto.id) }}"
+                       class="cancelar">
                         Cancelar
                     </a>
                 </div>

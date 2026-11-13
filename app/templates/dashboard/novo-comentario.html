@@ -48,7 +48,10 @@
 
             <div class="conta">
                 <span class="usuario">Gestor</span>
-                <button type="button" class="botao-sair">Sair</button>
+
+                <button type="button" class="botao-sair">
+                    Sair
+                </button>
             </div>
 
         </div>
@@ -56,34 +59,42 @@
 
     <main class="conteudo">
 
-        <a href="{{ url_for('dashboard.historico') }}" class="link-voltar">
-            ← Voltar ao histórico
+        <a href="{{ url_for('dashboard.historico', projeto_id=projeto.id) }}"
+           class="link-voltar">
+            Voltar ao histórico
         </a>
 
         <section class="introducao">
             <h1 class="titulo">Novo comentário</h1>
+
             <p class="subtitulo">
-                {{ projeto.nome if projeto else 'Projeto exemplo' }}
+                {{ projeto.nome }}
             </p>
         </section>
 
         {% if mensagem %}
-            <div class="alert alert-success">{{ mensagem }}</div>
+            <div class="alert alert-success" role="alert">
+                {{ mensagem }}
+            </div>
         {% endif %}
 
         {% if erro %}
-            <div class="alert alert-danger">{{ erro }}</div>
+            <div class="alert alert-danger" role="alert">
+                {{ erro }}
+            </div>
         {% endif %}
 
         <div class="formulario-container">
 
-            <form method="POST"
-                  action="{{ url_for('dashboard.novo_comentario') }}"
-                  class="formulario bg-white rounded-2 p-4">
+            <form
+                method="POST"
+                action="{{ url_for('dashboard.novo_comentario', projeto_id=projeto.id) }}"
+                class="formulario bg-white border rounded-3 p-3 p-md-4"
+            >
 
-                <div class="mb-4">
+                <div class="mb-3">
                     <label for="comentario" class="form-label">
-                        Comentário
+                        Comentário (obrigatório)
                     </label>
 
                     <textarea
@@ -91,18 +102,19 @@
                         id="comentario"
                         name="comentario"
                         rows="6"
+                        maxlength="1000"
                         placeholder="Escreva seu comentário..."
                         required
                     >{{ dados.comentario if dados else '' }}</textarea>
                 </div>
 
-                <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center gap-3 mt-4">
                     <button type="submit" class="botao-criar">
                         Publicar comentário
                     </button>
 
-                    <a href="{{ url_for('dashboard.historico') }}"
-                       class="cancelar text-decoration-none">
+                    <a href="{{ url_for('dashboard.historico', projeto_id=projeto.id) }}"
+                       class="cancelar">
                         Cancelar
                     </a>
                 </div>

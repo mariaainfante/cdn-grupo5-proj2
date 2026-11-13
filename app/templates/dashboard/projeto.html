@@ -72,6 +72,10 @@
                     Participantes
                 </a>
 
+                <a href="{{ url_for('dashboard.historico', projeto_id=projeto.id) }}" class="botao-secundario">
+                    Histórico
+                </a>
+
                 {% if propriedade %}
                     <a href="{{ url_for('dashboard.ambientes') }}" class="botao-secundario">
                         Propriedade e ambientes
@@ -100,14 +104,16 @@
 
                 <div class="campo-dado">
                     <span class="campo-dado__rotulo">Nome do projeto</span>
-                    <span class="campo-dado__valor">Projeto exemplo</span>
+                    <span class="campo-dado__valor">
+                        {{ projeto.nome }}
+                    </span>
                 </div>
 
                 <div class="campo-dado">
                     <span class="campo-dado__rotulo">Cliente</span>
                     <span class="campo-dado__valor">
                         <a href="{{ url_for('dashboard.info_cliente') }}" class="link-azul">
-                            Cliente exemplo
+                            {{ projeto.cliente }}
                         </a>
                     </span>
                 </div>

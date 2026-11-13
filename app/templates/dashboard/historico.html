@@ -59,15 +59,35 @@
 
     <main class="conteudo">
 
-        <a href="{{ url_for('dashboard.projeto') }}" class="link-voltar">
+        <a href="{{ url_for('dashboard.projeto', projeto_id=projeto.id) }}" class="link-voltar">
             Voltar para o projeto
         </a>
 
         <div class="introducao">
             <h1 class="titulo">Histórico do projeto</h1>
+
             <p class="subtitulo">
-                {{ projeto.nome if projeto else 'Projeto exemplo' }}
+                {{ projeto.nome }}
             </p>
+        </div>
+
+        <div class="historico__acoes">
+
+            <a href="{{ url_for('dashboard.novo_evento', projeto_id=projeto.id) }}"
+            class="botao-secundario">
+                Novo evento
+            </a>
+
+            <a href="{{ url_for('dashboard.novo_comentario', projeto_id=projeto.id) }}"
+            class="botao-secundario">
+                Novo comentário
+            </a>
+
+            <a href="{{ url_for('dashboard.nova_decisao', projeto_id=projeto.id) }}"
+            class="botao-secundario">
+                Nova decisão
+            </a>
+
         </div>
 
         <section class="historico">
