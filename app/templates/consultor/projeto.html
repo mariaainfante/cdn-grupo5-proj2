@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Conatus</title>
+</head>
+
+<body>
+
+    <a href="{{ url_for('consultor.inicio') }}">
+        Voltar aos projetos
+    </a>
+
+    <h1>{{ projeto.nm_projeto }}</h1>
+
+    <h2>Informações do projeto</h2>
+
+    <p>
+        <strong>Descrição:</strong>
+        {{ projeto.desc_projeto or "Não informada" }}
+    </p>
+
+    <p>
+        <strong>Estado:</strong>
+        {{ projeto.estado_projeto }}
+    </p>
+
+    <p>
+        <strong>Data de criação:</strong>
+        {{ projeto.criado_em or "Não informada" }}
+    </p>
+
+    <p>
+        <strong>Início previsto:</strong>
+        {{ projeto.inicio_previsto or "Não informado" }}
+    </p>
+
+    <p>
+        <strong>Fim previsto:</strong>
+        {{ projeto.fim_previsto or "Não informado" }}
+    </p>
+
+
+    <h2>Informações do cliente</h2>
+
+    <p>
+        <strong>Nome:</strong>
+        {{ projeto.nm_cliente }}
+    </p>
+
+    <p>
+        <strong>Contato:</strong>
+        {{ projeto.contato_cliente or "Não informado" }}
+    </p>
+
+    <p>
+        <strong>E-mail:</strong>
+        {{ projeto.email_cliente or "Não informado" }}
+    </p>
+
+
+    <h2>Outras informações</h2>
+
+    <p>As propriedades, os ambientes e o histórico poderão ser consultados nas próximas seções.</p>
+
+</body>
+</html>

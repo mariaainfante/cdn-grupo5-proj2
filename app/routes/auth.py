@@ -56,10 +56,49 @@ def login():
                     session["nm_user"] = usuario_bd["nm_user"]
                     session["papel_global"] = usuario_bd["papel_global"]
 
+                    # ----------------------------------
+                    # GESTOR
+                    # ----------------------------------
+
                     if usuario_bd["papel_global"] == "gestor":
                         return redirect(url_for("dashboard.gestor"))
 
+                    # ----------------------------------
+                    # VERIFICAR VÍNCULOS ATIVOS
+                    # ----------------------------------
+
+                    cursor.execute(
+                        """
+                        SELECT DISTINCT papel_no_projeto
+                        FROM vinculo_projeto_usuario
+                        WHERE id_user = %s
+                          AND ativo = 1
+                        """,
+                        (usuario_bd["id_user"],)
+                    )
+
+                    papeis = cursor.fetchall()
+
+                    papeis_usuario = [
+                        vinculo["papel_no_projeto"]
+                        for vinculo in papeis
+                    ]
+
+                    # ----------------------------------
+                    # CONSULTOR
+                    # ----------------------------------
+
+                    if "comercial" in papeis_usuario:
+                        return redirect(url_for("consultor.inicio"))
+
+                    # ----------------------------------
+                    # TÉCNICO E ARQUITETO
+                    # ----------------------------------
+                    # Esses painéis serão direcionados
+                    # quando suas rotas estiverem prontas.
+
                     return redirect(url_for("dashboard.aguardando_vinculo"))
+
             mensagem = "Usuário ou senha incorretos."
 
             return render_template("auth/login.html", mensagem=mensagem)
@@ -216,16 +255,13 @@ def recuperar_senha():
 
             if usuario:
 
-                # Gera código aleatório de cinco dígitos
                 codigo = str(secrets.randbelow(90000) + 10000)
 
-                # Criptografa o código
                 codigo_hash = bcrypt.hashpw(
                     codigo.encode("utf-8"),
                     bcrypt.gensalt()
                 ).decode("utf-8")
 
-                # Remove códigos anteriores não utilizados
                 cursor.execute(
                     """
                     DELETE FROM recuperacao_senha
@@ -235,7 +271,6 @@ def recuperar_senha():
                     (usuario["id_user"],)
                 )
 
-                # Salva o novo código com validade de 10 minutos
                 cursor.execute(
                     """
                     INSERT INTO recuperacao_senha (
@@ -254,7 +289,6 @@ def recuperar_senha():
                     (usuario["id_user"], codigo_hash)
                 )
 
-                # Envia o e-mail
                 from app import mail
                 from flask_mail import Message
 
@@ -366,7 +400,6 @@ def recuperar_senha_codigo():
                     mensagem=mensagem
                 )
 
-            # Marca o código como utilizado
             cursor.execute(
                 """
                 UPDATE recuperacao_senha
@@ -424,7 +457,6 @@ def nova_senha():
                 mensagem=mensagem
             )
 
-        # Criptografa a nova senha
         senha_hash = bcrypt.hashpw(
             senha.encode("utf-8"),
             bcrypt.gensalt()

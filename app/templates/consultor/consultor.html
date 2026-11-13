@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Conatus</title>
+</head>
+
+<body>
+
+    <h1>Olá, {{ session["nm_user"] }}!</h1>
+
+    <!-- INDICADORES -->
+
+    <h2>Visão geral</h2>
+
+    <div>
+        <h3>Total de projetos</h3>
+        <p>{{ total_projetos }}</p>
+    </div>
+
+    <div>
+        <h3>Em andamento</h3>
+        <p>{{ projetos_andamento }}</p>
+    </div>
+
+    <div>
+        <h3>Concluídos</h3>
+        <p>{{ projetos_concluidos }}</p>
+    </div>
+
+
+    <!-- PROJETOS -->
+
+    <h2>Meus projetos</h2>
+
+    {% if projetos %}
+
+        {% for projeto in projetos %}
+
+            <div>
+
+                <h3>{{ projeto.nome }}</h3>
+
+                <p>Cliente: {{ projeto.cliente }}</p>
+
+                <p>Estado: {{ projeto.estado }}</p>
+
+                <a href="{{ url_for('consultor.projeto', projeto_id=projeto.id) }}">
+                    Acessar projeto
+                </a>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>Você ainda não possui projetos vinculados.</p>
+
+    {% endif %}
+
+
+    <!-- ATIVIDADES RECENTES -->
+
+    <h2>Atividades recentes</h2>
+
+    {% if atividades %}
+
+        {% for atividade in atividades %}
+
+            <div>
+
+                <h3>{{ atividade.acao_evento }}</h3>
+
+                <p>{{ atividade.desc_evento }}</p>
+
+                <p>Projeto: {{ atividade.projeto }}</p>
+
+                <p>Data: {{ atividade.criado_em }}</p>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>Nenhuma atividade registrada recentemente.</p>
+
+    {% endif %}
+
+</body>
+</html>

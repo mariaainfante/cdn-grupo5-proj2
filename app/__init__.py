@@ -48,7 +48,9 @@ def index():
 from app.routes.auth import auth_bp
 from app.routes.dashboard import dashboard_bp
 from app.routes.orcamento import orcamento_bp
+from app.routes.consultor import consultor_bp
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(orcamento_bp)
+app.register_blueprint(consultor_bp)
