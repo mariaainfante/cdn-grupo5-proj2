@@ -49,14 +49,13 @@
             <div class="conta">
                 <span class="usuario">Gestor</span>
 
-                <button type="button" class="botao-sair">
+                <a href="{{ url_for('auth.logout') }}" class="botao-sair">
                     Sair
-                </button>
+                </a>
             </div>
 
         </div>
     </header>
-
 
     <main class="conteudo">
 
@@ -67,7 +66,6 @@
                 Selecione o cliente e informe os dados do projeto. O estado inicial será Planejado.
             </p>
         </div>
-
 
         {% if mensagem %}
             <div class="alert alert-success" role="alert">
@@ -80,7 +78,6 @@
                 {{ erro }}
             </div>
         {% endif %}
-
 
         <div class="formulario-container">
 
@@ -115,7 +112,6 @@
                     </select>
                 </div>
 
-
                 <div class="mb-3">
                     <label for="nome" class="form-label">
                         Nome (obrigatório)
@@ -126,11 +122,10 @@
                         id="nome"
                         name="nome"
                         class="form-control campo"
-                        value="{{ dados.get('nome', '') }}"
+                        value="{{ dados.get('nome', '') if dados else '' }}"
                         required
                     >
                 </div>
-
 
                 <div class="mb-3">
                     <label for="descricao" class="form-label">
@@ -143,9 +138,8 @@
                         rows="4"
                         class="form-control campo"
                         required
-                    >{{ dados.get('descricao', '') }}</textarea>
+                    >{{ dados.get('descricao', '') if dados else '' }}</textarea>
                 </div>
-
 
                 <div class="mb-3">
                     <label for="inicio" class="form-label">
@@ -157,10 +151,9 @@
                         id="inicio"
                         name="inicio"
                         class="form-control campo"
-                        value="{{ dados.get('inicio', '') }}"
+                        value="{{ dados.get('inicio', '') if dados else '' }}"
                     >
                 </div>
-
 
                 <div class="mb-3">
                     <label for="termino" class="form-label">
@@ -172,10 +165,9 @@
                         id="termino"
                         name="termino"
                         class="form-control campo"
-                        value="{{ dados.get('termino', '') }}"
+                        value="{{ dados.get('termino', '') if dados else '' }}"
                     >
                 </div>
-
 
                 <div class="d-flex align-items-center gap-3 mt-4">
                     <button type="submit" class="botao-criar">

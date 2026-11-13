@@ -68,7 +68,8 @@
 
             <div class="acoes-projeto">
 
-                <a href="{{ url_for('dashboard.participantes') }}" class="botao-secundario">
+                <a href="{{ url_for('dashboard.participantes', projeto_id=projeto.id) }}"
+                class="botao-secundario">
                     Participantes
                 </a>
 
@@ -119,7 +120,7 @@
                 <div class="campo-dado">
                     <span class="campo-dado__rotulo">Cliente</span>
                     <span class="campo-dado__valor">
-                        <a href="{{ url_for('dashboard.info_cliente') }}" class="link-azul">
+                        <a href="{{ url_for('dashboard.info_cliente', cliente_id=projeto.cliente_id) }}" class="link-azul">
                             {{ projeto.cliente }}
                         </a>
                     </span>

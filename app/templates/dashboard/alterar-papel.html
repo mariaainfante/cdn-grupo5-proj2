@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Alterar papel | Conatus</title>
+    <title>Conatus</title>
 
     <link rel="icon" type="image/png"
           href="{{ url_for('static', filename='img/conatus-icone-1024 (1).png') }}">
@@ -23,108 +23,128 @@
 
 <body>
 
-    <header class="topo">
-        <div class="topo__interno">
+<header class="topo">
+    <div class="topo__interno">
 
-            <a href="{{ url_for('index') }}" class="marca" aria-label="Conatus">
-                <img
-                    src="{{ url_for('static', filename='img/Logoconatus.png') }}"
-                    alt="Conatus"
-                    class="logo"
-                >
-            </a>
-
-            <nav class="menu" aria-label="Navegação principal">
-                <a href="{{ url_for('dashboard.gestor') }}"
-                   class="menu__link menu__link--ativo"
-                   aria-current="page">
-                    Projetos
-                </a>
-
-                <a href="{{ url_for('dashboard.clientes') }}" class="menu__link">
-                    Clientes
-                </a>
-            </nav>
-
-            <div class="conta">
-                <span class="usuario">Gestor</span>
-
-                <button type="button" class="botao-sair">
-                    Sair
-                </button>
-            </div>
-
-        </div>
-    </header>
-
-    <main class="conteudo">
-
-        <a href="{{ url_for('dashboard.participantes') }}" class="link-azul d-inline-block mb-3">
-            Voltar para participantes
+        <a href="{{ url_for('index') }}" class="marca" aria-label="Conatus">
+            <img
+                src="{{ url_for('static', filename='img/Logoconatus.png') }}"
+                alt="Conatus"
+                class="logo"
+            >
         </a>
 
-        <div class="introducao">
-            <h1 class="titulo">Alterar papel</h1>
-            <p class="subtitulo">Projeto exemplo</p>
+        <nav class="menu" aria-label="Navegação principal">
+            <a href="{{ url_for('dashboard.gestor') }}"
+               class="menu__link menu__link--ativo"
+               aria-current="page">
+                Projetos
+            </a>
+
+            <a href="{{ url_for('dashboard.clientes') }}" class="menu__link">
+                Clientes
+            </a>
+        </nav>
+
+        <div class="conta">
+            <span class="usuario">Gestor</span>
+
+            <button type="button" class="botao-sair">
+                Sair
+            </button>
         </div>
 
-        {% if mensagem %}
-            <div class="alert alert-success" role="alert">
-                {{ mensagem }}
-            </div>
-        {% endif %}
+    </div>
+</header>
 
-        {% if erro %}
-            <div class="alert alert-danger" role="alert">
-                {{ erro }}
-            </div>
-        {% endif %}
+<main class="conteudo">
 
-        <p class="mb-4">
-            Participante exemplo — participante@example.com
-        </p>
+    <a href="{{ url_for('dashboard.participantes', projeto_id=projeto.id_projeto) }}"
+       class="link-azul d-inline-block mb-3">
+        Voltar para participantes
+    </a>
 
-        <div class="formulario-container">
+    <div class="introducao">
+        <h1 class="titulo">Alterar papel</h1>
+        <p class="subtitulo">Projeto {{ projeto.nm_projeto }}</p>
+    </div>
 
-            <form
-                class="formulario bg-white border rounded-3 p-3 p-md-4"
-                action="{{ url_for('dashboard.alterar_papel') }}"
-                method="POST"
-            >
-
-                <div class="mb-3">
-                    <label for="papel" class="form-label">
-                        Papel no projeto (obrigatório)
-                    </label>
-
-                    <select id="papel" name="papel" class="form-select campo" required>
-                        <option value="gestor"
-                            {% if dados and dados.papel == 'gestor' %}selected{% endif %}>
-                            Gestor
-                        </option>
-
-                        <option value="arquiteto"
-                            {% if not dados or dados.papel == 'arquiteto' %}selected{% endif %}>
-                            Arquiteto
-                        </option>
-                    </select>
-                </div>
-
-                <div class="d-flex align-items-center gap-3 mt-4">
-                    <button type="submit" class="botao-criar">
-                        Alterar papel
-                    </button>
-
-                    <a href="{{ url_for('dashboard.participantes') }}" class="cancelar">
-                        Cancelar
-                    </a>
-                </div>
-
-            </form>
-
+    {% if mensagem %}
+        <div class="alert alert-success" role="alert">
+            {{ mensagem }}
         </div>
+    {% endif %}
 
-    </main>
+    {% if erro %}
+        <div class="alert alert-danger" role="alert">
+            {{ erro }}
+        </div>
+    {% endif %}
+
+    <p class="mb-4">
+        {{ participante.nome }} — {{ participante.email }}
+    </p>
+
+    <div class="formulario-container">
+
+        <form
+            class="formulario bg-white border rounded-3 p-3 p-md-4"
+            action="{{ url_for(
+                'dashboard.alterar_papel',
+                projeto_id=projeto.id_projeto,
+                participante_id=participante.id_user
+            ) }}"
+            method="POST"
+        >
+
+            <div class="mb-3">
+                <label for="papel" class="form-label">
+                    Papel no projeto (obrigatório)
+                </label>
+
+                <select id="papel" name="papel" class="form-select campo" required>
+
+                    <option value="gestor"
+                        {% if dados.papel == 'gestor' %}selected{% endif %}>
+                        Gestor
+                    </option>
+
+                    <option value="tecnico"
+                        {% if dados.papel == 'tecnico' %}selected{% endif %}>
+                        Técnico
+                    </option>
+
+                    <option value="arquiteto"
+                        {% if dados.papel == 'arquiteto' %}selected{% endif %}>
+                        Arquiteto
+                    </option>
+
+                    <option value="comercial"
+                        {% if dados.papel == 'comercial' %}selected{% endif %}>
+                        Comercial
+                    </option>
+
+                </select>
+            </div>
+
+            <div class="d-flex align-items-center gap-3 mt-4">
+
+                <button type="submit" class="botao-criar">
+                    Alterar papel
+                </button>
+
+                <a href="{{ url_for('dashboard.participantes', projeto_id=projeto.id_projeto) }}"
+                   class="cancelar">
+                    Cancelar
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</main>
 
 </body>
 </html>

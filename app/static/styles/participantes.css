@@ -114,13 +114,23 @@
     margin-top: 16px;
 }
 
-.participante__acoes a {
+.participante__acoes a,
+.participante__acoes button {
     color: var(--link);
     font-size: 12px;
     text-decoration: none;
 }
 
-.participante__acoes a:hover {
+.participante__acoes button {
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.participante__acoes a:hover,
+.participante__acoes button:hover {
     text-decoration: underline;
 }
 

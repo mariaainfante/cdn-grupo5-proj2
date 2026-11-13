@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Desativar participante | Conatus</title>
+    <title>Conatus</title>
 
     <link rel="icon" type="image/png"
           href="{{ url_for('static', filename='img/conatus-icone-1024 (1).png') }}">
@@ -59,13 +59,14 @@
 
     <main class="conteudo">
 
-        <a href="{{ url_for('dashboard.participantes') }}" class="link-azul d-inline-block mb-3">
+        <a href="{{ url_for('dashboard.participantes', projeto_id=projeto.id_projeto) }}"
+           class="link-azul d-inline-block mb-3">
             Voltar para participantes
         </a>
 
         <div class="introducao">
             <h1 class="titulo">Desativar participante</h1>
-            <p class="subtitulo">Projeto exemplo</p>
+            <p class="subtitulo">Projeto {{ projeto.nm_projeto }}</p>
         </div>
 
         {% if mensagem %}
@@ -81,29 +82,38 @@
         {% endif %}
 
         <p class="mb-4">
-            **Participante:** participante@example.com
+            <strong>Participante:</strong>
+            {{ participante.nome }} — {{ participante.email }}
         </p>
 
         <div class="formulario-container">
 
             <form
                 class="formulario bg-white border rounded-3 p-3 p-md-4"
-                action="{{ url_for('dashboard.desativar_participante') }}"
+                action="{{ url_for(
+                    'dashboard.desativar_participante',
+                    projeto_id=projeto.id_projeto,
+                    participante_id=participante.id_user
+                ) }}"
                 method="POST"
             >
 
                 <p class="mb-4">
-                    Confirme a desativação deste participante. O histórico de participação será preservado.
+                    Confirme a desativação deste participante.
+                    O histórico de participação será preservado.
                 </p>
 
                 <div class="d-flex align-items-center gap-3">
+
                     <button type="submit" class="botao-criar">
                         Desativar participante
                     </button>
 
-                    <a href="{{ url_for('dashboard.participantes') }}" class="cancelar">
+                    <a href="{{ url_for('dashboard.participantes', projeto_id=projeto.id_projeto) }}"
+                       class="cancelar">
                         Cancelar
                     </a>
+
                 </div>
 
             </form>

@@ -28,67 +28,36 @@ def verificar_gestor_global():
 
 
 # ==================================================
-# CLIENTES DE EXEMPLO
+# VERIFICAÇÃO DE PERMISSÃO NO PROJETO
 # ==================================================
 
-CLIENTES_EXEMPLO = [
-    {
-        "id": 1,
-        "nome": "Cliente exemplo",
-        "contato": "contato@example.com"
-    }
-]
+def verificar_gestor_no_projeto(projeto_id):
 
+    conexao = conectar_banco()
+    cursor = conexao.cursor()
 
-# ==================================================
-# PROJETOS DE EXEMPLO
-# ==================================================
+    try:
 
-PROJETOS_EXEMPLO = [
-    {
-        "id": 1,
-        "nome": "Projeto exemplo",
-        "cliente": "Cliente exemplo"
-    }
-]
+        cursor.execute(
+            """
+            SELECT id_vinculo
+            FROM vinculo_projeto_usuario
+            WHERE id_projeto = %s
+              AND id_user = %s
+              AND papel_no_projeto = 'gestor'
+              AND ativo = 1
+            """,
+            (projeto_id, session["id_user"])
+        )
 
+        vinculo = cursor.fetchone()
 
-# ==================================================
-# HISTÓRICO DOS PROJETOS
-# ==================================================
+        if not vinculo:
+            abort(403)
 
-HISTORICO_PROJETOS = {
-    1: []
-}
-
-
-# ==================================================
-# FUNÇÕES AUXILIARES
-# ==================================================
-
-def buscar_projeto(projeto_id):
-
-    for projeto in PROJETOS_EXEMPLO:
-
-        if projeto["id"] == projeto_id:
-            return projeto
-
-    abort(404)
-
-
-def adicionar_historico(projeto_id, tipo, data, descricao):
-
-    if projeto_id not in HISTORICO_PROJETOS:
-        HISTORICO_PROJETOS[projeto_id] = []
-
-    registro = {
-        "tipo": tipo,
-        "data": data,
-        "descricao": descricao,
-        "responsavel": "Gestor"
-    }
-
-    HISTORICO_PROJETOS[projeto_id].append(registro)
+    finally:
+        cursor.close()
+        conexao.close()
 
 
 # ==================================================
@@ -142,50 +111,24 @@ def gestor():
 
 
 # ==================================================
-# VERIFICAÇÃO DE PERMISSÃO NO PROJETO
+# AGUARDANDO VÍNCULO
 # ==================================================
 
-def verificar_gestor_no_projeto(projeto_id):
+@dashboard_bp.get("/aguardando-vinculo")
+def aguardando_vinculo():
 
-    conexao = conectar_banco()
-    cursor = conexao.cursor()
+    if session.get("papel_global") != "padrao":
+        abort(403)
 
-    try:
-
-        cursor.execute(
-            """
-            SELECT id_vinculo
-            FROM vinculo_projeto_usuario
-            WHERE id_projeto = %s
-              AND id_user = %s
-              AND papel_no_projeto = 'gestor'
-              AND ativo = 1
-            """,
-            (projeto_id, session["id_user"])
-        )
-
-        vinculo = cursor.fetchone()
-
-        if not vinculo:
-            abort(403)
-
-    finally:
-        cursor.close()
-        conexao.close()
+    return render_template("dashboard/aguardando-vinculo.html")
 
 
 # ==================================================
 # PROJETO
 # ==================================================
 
-
-# ==================================================
-# PROJETO
-# ==================================================
-
-@dashboard_bp.get("/projeto")
 @dashboard_bp.get("/projeto/<int:projeto_id>")
-def projeto(projeto_id=1):
+def projeto(projeto_id):
 
     conexao = conectar_banco()
     cursor = conexao.cursor(dictionary=True)
@@ -202,6 +145,7 @@ def projeto(projeto_id=1):
                 p.inicio_previsto AS inicio,
                 p.fim_previsto AS termino,
                 p.criado_em AS criado_em,
+                c.id_cliente AS cliente_id,
                 c.nm_cliente AS cliente,
                 c.contato_cliente AS contato_cliente,
                 v.papel_no_projeto AS papel
@@ -226,7 +170,6 @@ def projeto(projeto_id=1):
         if not projeto_atual:
             abort(404)
 
-        # Busca todas as propriedades vinculadas ao projeto
         cursor.execute(
             """
             SELECT
@@ -254,7 +197,6 @@ def projeto(projeto_id=1):
     )
 
 
-
 # ==================================================
 # NOVO PROJETO
 # ==================================================
@@ -268,39 +210,115 @@ def novo_projeto():
     erro = None
     dados = {}
 
-    clientes = CLIENTES_EXEMPLO
+    conexao = conectar_banco()
+    cursor = conexao.cursor(dictionary=True)
 
-    if request.method == "POST":
+    try:
 
-        dados = request.form
+        cursor.execute("""
+            SELECT
+                id_cliente AS id,
+                nm_cliente AS nome
+            FROM cliente
+            ORDER BY nm_cliente ASC
+        """)
 
-        cliente = request.form.get("cliente", "").strip()
-        nome = request.form.get("nome", "").strip()
-        descricao = request.form.get("descricao", "").strip()
-        inicio = request.form.get("inicio", "").strip()
-        termino = request.form.get("termino", "").strip()
+        clientes = cursor.fetchall()
 
-        ids_clientes = [str(c["id"]) for c in clientes]
+        if request.method == "POST":
 
-        if not cliente or not nome or not descricao:
-            erro = "Preencha todos os campos obrigatórios."
+            dados = request.form
 
-        elif cliente not in ids_clientes:
-            erro = "Selecione um cliente válido."
+            cliente = request.form.get("cliente", "").strip()
+            nome = request.form.get("nome", "").strip()
+            descricao = request.form.get("descricao", "").strip()
+            inicio = request.form.get("inicio", "").strip()
+            termino = request.form.get("termino", "").strip()
 
-        elif inicio and termino and termino < inicio:
-            erro = "A data de término não pode ser anterior à data de início."
+            if not cliente or not nome or not descricao:
 
-        else:
-            mensagem = "Projeto recebido e validado com sucesso!"
+                erro = "Preencha todos os campos obrigatórios."
 
-    return render_template(
-        "dashboard/novo-projeto.html",
-        clientes=clientes,
-        mensagem=mensagem,
-        erro=erro,
-        dados=dados
-    )
+            elif not cliente.isdigit():
+
+                erro = "Selecione um cliente válido."
+
+            elif inicio and termino and termino < inicio:
+
+                erro = "A data de término não pode ser anterior à data de início."
+
+            else:
+
+                cursor.execute("""
+                    SELECT id_cliente
+                    FROM cliente
+                    WHERE id_cliente = %s
+                """, (int(cliente),))
+
+                cliente_bd = cursor.fetchone()
+
+                if not cliente_bd:
+
+                    erro = "Cliente não encontrado."
+
+                else:
+
+                    cursor.execute("""
+                        INSERT INTO projeto (
+                            id_cliente,
+                            nm_projeto,
+                            desc_projeto,
+                            inicio_previsto,
+                            fim_previsto
+                        )
+                        VALUES (%s, %s, %s, %s, %s)
+                    """, (
+                        int(cliente),
+                        nome,
+                        descricao,
+                        inicio or None,
+                        termino or None
+                    ))
+
+                    id_projeto = cursor.lastrowid
+
+                    cursor.execute("""
+                        INSERT INTO vinculo_projeto_usuario (
+                            id_projeto,
+                            id_user,
+                            papel_no_projeto,
+                            ativo
+                        )
+                        VALUES (%s, %s, 'gestor', 1)
+                    """, (
+                        id_projeto,
+                        session["id_user"]
+                    ))
+
+                    conexao.commit()
+
+                    return redirect(
+                        url_for(
+                            "dashboard.projeto",
+                            projeto_id=id_projeto
+                        )
+                    )
+
+        return render_template(
+            "dashboard/novo-projeto.html",
+            clientes=clientes,
+            mensagem=mensagem,
+            erro=erro,
+            dados=dados
+        )
+
+    except Exception:
+        conexao.rollback()
+        raise
+
+    finally:
+        cursor.close()
+        conexao.close()
 
 
 # ==================================================
@@ -429,50 +447,202 @@ def editar_projeto(projeto_id):
 # PARTICIPANTES
 # ==================================================
 
-@dashboard_bp.get("/participantes")
-def participantes():
+@dashboard_bp.get("/projeto/<int:projeto_id>/participantes")
+def participantes(projeto_id):
 
-    return render_template("dashboard/participantes.html")
+    verificar_gestor_no_projeto(projeto_id)
+
+    conexao = conectar_banco()
+    cursor = conexao.cursor(dictionary=True)
+
+    try:
+
+        cursor.execute(
+            """
+            SELECT
+                id_projeto,
+                nm_projeto
+            FROM projeto
+            WHERE id_projeto = %s
+            """,
+            (projeto_id,)
+        )
+
+        projeto_atual = cursor.fetchone()
+
+        if not projeto_atual:
+            abort(404)
+
+        cursor.execute(
+            """
+            SELECT
+                v.id_vinculo,
+                u.id_user,
+                u.nm_user AS nome,
+                u.email_user AS email,
+                v.papel_no_projeto AS papel,
+                v.ativo
+            FROM vinculo_projeto_usuario v
+
+            INNER JOIN usuario u
+                ON v.id_user = u.id_user
+
+            WHERE v.id_projeto = %s
+
+            ORDER BY v.ativo DESC, u.nm_user ASC
+            """,
+            (projeto_id,)
+        )
+
+        participantes_lista = cursor.fetchall()
+
+    finally:
+        cursor.close()
+        conexao.close()
+
+    return render_template(
+        "dashboard/participantes.html",
+        projeto=projeto_atual,
+        participantes=participantes_lista
+    )
 
 
-@dashboard_bp.route("/adicionar-participante", methods=["GET", "POST"])
-def adicionar_participante():
+# ==================================================
+# ADICIONAR PARTICIPANTE
+# ==================================================
+
+@dashboard_bp.route(
+    "/projeto/<int:projeto_id>/adicionar-participante",
+    methods=["GET", "POST"]
+)
+def adicionar_participante(projeto_id):
+
+    verificar_gestor_no_projeto(projeto_id)
 
     mensagem = None
     erro = None
     dados = {}
 
-    usuarios = [
-        {
-            "id": 1,
-            "nome": "Participante exemplo",
-            "email": "participante@example.com"
-        }
-    ]
+    conexao = conectar_banco()
+    cursor = conexao.cursor(dictionary=True)
 
-    if request.method == "POST":
+    try:
 
-        dados = request.form
+        cursor.execute("""
+            SELECT id_projeto, nm_projeto
+            FROM projeto
+            WHERE id_projeto = %s
+        """, (projeto_id,))
 
-        usuario = request.form.get("usuario", "").strip()
-        papel = request.form.get("papel", "").strip()
+        projeto_atual = cursor.fetchone()
 
-        ids_usuarios = [str(u["id"]) for u in usuarios]
+        if not projeto_atual:
+            abort(404)
 
-        if not usuario or not papel:
-            erro = "Preencha todos os campos obrigatórios."
+        if request.method == "POST":
 
-        elif usuario not in ids_usuarios:
-            erro = "Selecione um usuário válido."
+            dados = request.form
 
-        elif papel not in ["gestor", "arquiteto"]:
-            erro = "Selecione um papel válido."
+            usuario = request.form.get("usuario", "").strip()
+            papel = request.form.get("papel", "").strip()
 
-        else:
-            mensagem = "Participante recebido e validado com sucesso!"
+            papeis_validos = [
+                "gestor",
+                "tecnico",
+                "arquiteto",
+                "comercial"
+            ]
+
+            if not usuario or not papel:
+                erro = "Preencha todos os campos obrigatórios."
+
+            elif not usuario.isdigit():
+                erro = "Selecione um usuário válido."
+
+            elif papel not in papeis_validos:
+                erro = "Selecione um papel válido."
+
+            else:
+
+                cursor.execute("""
+                    SELECT id_user
+                    FROM usuario
+                    WHERE id_user = %s
+                    AND ativo = 1
+                """, (int(usuario),))
+
+                usuario_bd = cursor.fetchone()
+
+                if not usuario_bd:
+                    erro = "Usuário não encontrado ou inativo."
+
+                else:
+
+                    cursor.execute("""
+                        SELECT id_vinculo
+                        FROM vinculo_projeto_usuario
+                        WHERE id_projeto = %s
+                        AND id_user = %s
+                    """, (projeto_id, int(usuario)))
+
+                    vinculo = cursor.fetchone()
+
+                    if vinculo:
+
+                        cursor.execute("""
+                            UPDATE vinculo_projeto_usuario
+                            SET papel_no_projeto = %s,
+                                ativo = 1
+                            WHERE id_vinculo = %s
+                        """, (papel, vinculo["id_vinculo"]))
+
+                    else:
+
+                        cursor.execute("""
+                            INSERT INTO vinculo_projeto_usuario (
+                                id_projeto,
+                                id_user,
+                                papel_no_projeto,
+                                ativo
+                            )
+                            VALUES (%s, %s, %s, 1)
+                        """, (projeto_id, int(usuario), papel))
+
+                    conexao.commit()
+
+                    return redirect(
+                        url_for(
+                            "dashboard.participantes",
+                            projeto_id=projeto_id
+                        )
+                    )
+
+        cursor.execute("""
+            SELECT
+                u.id_user AS id,
+                u.nm_user AS nome,
+                u.email_user AS email
+            FROM usuario u
+            WHERE u.ativo = 1
+            AND NOT EXISTS (
+                SELECT 1
+                FROM vinculo_projeto_usuario v
+                WHERE v.id_projeto = %s
+                AND v.id_user = u.id_user
+                AND v.ativo = 1
+            )
+            ORDER BY u.nm_user ASC
+        """, (projeto_id,))
+
+        usuarios = cursor.fetchall()
+
+    finally:
+        cursor.close()
+        conexao.close()
 
     return render_template(
         "dashboard/adicionar-participante.html",
+        projeto=projeto_atual,
         usuarios=usuarios,
         mensagem=mensagem,
         erro=erro,
@@ -480,45 +650,305 @@ def adicionar_participante():
     )
 
 
-@dashboard_bp.route("/alterar-papel", methods=["GET", "POST"])
-def alterar_papel():
+# ==================================================
+# ALTERAR PAPEL DO PARTICIPANTE
+# ==================================================
+
+@dashboard_bp.route(
+    "/projeto/<int:projeto_id>/participante/<int:participante_id>/alterar-papel",
+    methods=["GET", "POST"]
+)
+def alterar_papel(projeto_id, participante_id):
+
+    verificar_gestor_no_projeto(projeto_id)
 
     mensagem = None
     erro = None
 
-    dados = {"papel": "arquiteto"}
+    conexao = conectar_banco()
+    cursor = conexao.cursor(dictionary=True)
 
-    if request.method == "POST":
+    try:
 
-        papel = request.form.get("papel", "").strip()
-        dados = request.form
+        cursor.execute("""
+            SELECT id_projeto, nm_projeto
+            FROM projeto
+            WHERE id_projeto = %s
+        """, (projeto_id,))
 
-        if papel not in ["gestor", "arquiteto"]:
-            erro = "Selecione um papel válido."
+        projeto_atual = cursor.fetchone()
 
-        else:
-            mensagem = "Papel recebido e validado com sucesso!"
+        if not projeto_atual:
+            abort(404)
 
-    return render_template(
-        "dashboard/alterar-papel.html",
-        mensagem=mensagem,
-        erro=erro,
-        dados=dados
-    )
+        cursor.execute("""
+            SELECT
+                v.id_vinculo,
+                v.id_user,
+                v.papel_no_projeto AS papel,
+                u.nm_user AS nome,
+                u.email_user AS email
+            FROM vinculo_projeto_usuario v
+
+            INNER JOIN usuario u
+                ON v.id_user = u.id_user
+
+            WHERE v.id_projeto = %s
+              AND v.id_user = %s
+            ORDER BY v.ativo DESC, v.id_vinculo DESC
+            LIMIT 1
+        """, (projeto_id, participante_id))
+
+        participante = cursor.fetchone()
+
+        if not participante:
+            abort(404)
+
+        dados = {
+            "papel": participante["papel"]
+        }
+
+        if request.method == "POST":
+
+            papel = request.form.get("papel", "").strip()
+
+            dados = {
+                "papel": papel
+            }
+
+            papeis_validos = [
+                "gestor",
+                "tecnico",
+                "arquiteto",
+                "comercial"
+            ]
+
+            if participante_id == session["id_user"]:
+                erro = "Você não pode alterar seu próprio papel."
+
+            elif papel not in papeis_validos:
+                erro = "Selecione um papel válido."
+
+            else:
+
+                cursor.execute("""
+                    UPDATE vinculo_projeto_usuario
+                    SET papel_no_projeto = %s
+                    WHERE id_vinculo = %s
+                      AND id_projeto = %s
+                """, (
+                    papel,
+                    participante["id_vinculo"],
+                    projeto_id
+                ))
+
+                conexao.commit()
+
+                return redirect(
+                    url_for(
+                        "dashboard.participantes",
+                        projeto_id=projeto_id
+                    )
+                )
+
+        return render_template(
+            "dashboard/alterar-papel.html",
+            projeto=projeto_atual,
+            participante=participante,
+            mensagem=mensagem,
+            erro=erro,
+            dados=dados
+        )
+
+    except Exception:
+        conexao.rollback()
+        raise
+
+    finally:
+        cursor.close()
+        conexao.close()
 
 
-@dashboard_bp.route("/desativar-participante", methods=["GET", "POST"])
-def desativar_participante():
+# ==================================================
+# DESATIVAR PARTICIPANTE
+# ==================================================
+
+@dashboard_bp.route(
+    "/projeto/<int:projeto_id>/participante/<int:participante_id>/desativar",
+    methods=["GET", "POST"]
+)
+def desativar_participante(projeto_id, participante_id):
+
+    verificar_gestor_no_projeto(projeto_id)
 
     mensagem = None
+    erro = None
 
-    if request.method == "POST":
-        mensagem = "Solicitação de desativação recebida com sucesso!"
+    conexao = conectar_banco()
+    cursor = conexao.cursor(dictionary=True)
 
-    return render_template(
-        "dashboard/desativar-participante.html",
-        mensagem=mensagem
-    )
+    try:
+
+        cursor.execute("""
+            SELECT id_projeto, nm_projeto
+            FROM projeto
+            WHERE id_projeto = %s
+        """, (projeto_id,))
+
+        projeto_atual = cursor.fetchone()
+
+        if not projeto_atual:
+            abort(404)
+
+        cursor.execute("""
+            SELECT
+                v.id_vinculo,
+                v.id_user,
+                v.papel_no_projeto AS papel,
+                v.ativo,
+                u.nm_user AS nome,
+                u.email_user AS email
+            FROM vinculo_projeto_usuario v
+
+            INNER JOIN usuario u
+                ON v.id_user = u.id_user
+
+            WHERE v.id_projeto = %s
+              AND v.id_user = %s
+              AND v.ativo = 1
+            LIMIT 1
+        """, (projeto_id, participante_id))
+
+        participante = cursor.fetchone()
+
+        if not participante:
+            abort(404)
+
+        if request.method == "POST":
+
+            if participante_id == session["id_user"]:
+
+                erro = "Você não pode desativar sua própria participação."
+
+            else:
+
+                if participante["papel"] == "gestor":
+
+                    cursor.execute("""
+                        SELECT COUNT(*) AS total
+                        FROM vinculo_projeto_usuario
+                        WHERE id_projeto = %s
+                          AND papel_no_projeto = 'gestor'
+                          AND ativo = 1
+                    """, (projeto_id,))
+
+                    total_gestores = cursor.fetchone()["total"]
+
+                    if total_gestores <= 1:
+                        erro = "Não é possível desativar o último gestor do projeto."
+
+                if not erro:
+
+                    cursor.execute("""
+                        UPDATE vinculo_projeto_usuario
+                        SET ativo = 0
+                        WHERE id_vinculo = %s
+                          AND id_projeto = %s
+                    """, (
+                        participante["id_vinculo"],
+                        projeto_id
+                    ))
+
+                    conexao.commit()
+
+                    return redirect(
+                        url_for(
+                            "dashboard.participantes",
+                            projeto_id=projeto_id
+                        )
+                    )
+
+        return render_template(
+            "dashboard/desativar-participante.html",
+            projeto=projeto_atual,
+            participante=participante,
+            mensagem=mensagem,
+            erro=erro
+        )
+
+    except Exception:
+        conexao.rollback()
+        raise
+
+    finally:
+        cursor.close()
+        conexao.close()
+
+
+# ==================================================
+# REATIVAR PARTICIPANTE
+# ==================================================
+
+@dashboard_bp.route(
+    "/projeto/<int:projeto_id>/participante/<int:participante_id>/reativar",
+    methods=["POST"]
+)
+def reativar_participante(projeto_id, participante_id):
+
+    verificar_gestor_no_projeto(projeto_id)
+
+    conexao = conectar_banco()
+    cursor = conexao.cursor(dictionary=True)
+
+    try:
+
+        cursor.execute("""
+            SELECT id_projeto
+            FROM projeto
+            WHERE id_projeto = %s
+        """, (projeto_id,))
+
+        projeto_atual = cursor.fetchone()
+
+        if not projeto_atual:
+            abort(404)
+
+        cursor.execute("""
+            SELECT id_vinculo
+            FROM vinculo_projeto_usuario
+            WHERE id_projeto = %s
+              AND id_user = %s
+              AND ativo = 0
+            LIMIT 1
+        """, (projeto_id, participante_id))
+
+        vinculo = cursor.fetchone()
+
+        if not vinculo:
+            abort(404)
+
+        cursor.execute("""
+            UPDATE vinculo_projeto_usuario
+            SET ativo = 1
+            WHERE id_vinculo = %s
+        """, (vinculo["id_vinculo"],))
+
+        conexao.commit()
+
+        return redirect(
+            url_for(
+                "dashboard.participantes",
+                projeto_id=projeto_id
+            )
+        )
+
+    except Exception:
+        conexao.rollback()
+        raise
+
+    finally:
+        cursor.close()
+        conexao.close()
 
 
 # ==================================================
@@ -528,11 +958,36 @@ def desativar_participante():
 @dashboard_bp.get("/clientes")
 def clientes():
 
-    return render_template(
-        "dashboard/clientes.html",
-        clientes=CLIENTES_EXEMPLO
-    )
+    conexao = conectar_banco()
+    cursor = conexao.cursor(dictionary=True)
 
+    try:
+
+        cursor.execute("""
+            SELECT
+                id_cliente AS id,
+                nm_cliente AS nome,
+                contato_cliente AS contato,
+                email_cliente AS email
+            FROM cliente
+            ORDER BY nm_cliente ASC
+        """)
+
+        clientes = cursor.fetchall()
+
+        return render_template(
+            "dashboard/clientes.html",
+            clientes=clientes
+        )
+
+    finally:
+        cursor.close()
+        conexao.close()
+
+
+# ==================================================
+# NOVO CLIENTE
+# ==================================================
 
 @dashboard_bp.route("/novo-cliente", methods=["GET", "POST"])
 def novo_cliente():
@@ -551,10 +1006,35 @@ def novo_cliente():
         contato = request.form.get("contato", "").strip()
 
         if not nome:
+
             erro = "O nome do cliente é obrigatório."
 
         else:
-            mensagem = "Cliente recebido e validado com sucesso!"
+
+            conexao = conectar_banco()
+            cursor = conexao.cursor()
+
+            try:
+
+                cursor.execute("""
+                    INSERT INTO cliente (
+                        nm_cliente,
+                        contato_cliente
+                    )
+                    VALUES (%s, %s)
+                """, (nome, contato or ""))
+
+                conexao.commit()
+
+                return redirect(url_for("dashboard.clientes"))
+
+            except Exception:
+                conexao.rollback()
+                raise
+
+            finally:
+                cursor.close()
+                conexao.close()
 
     return render_template(
         "dashboard/novo-cliente.html",
@@ -564,53 +1044,195 @@ def novo_cliente():
     )
 
 
-@dashboard_bp.get("/info-cliente")
-def info_cliente():
+# ==================================================
+# INFORMAÇÕES DO CLIENTE
+# ==================================================
 
-    cliente = CLIENTES_EXEMPLO[0]
+@dashboard_bp.get("/info-cliente/<int:cliente_id>")
+def info_cliente(cliente_id):
 
-    return render_template(
-        "dashboard/info-cliente.html",
-        cliente=cliente
-    )
+    conexao = conectar_banco()
+    cursor = conexao.cursor(dictionary=True)
+
+    try:
+
+        cursor.execute("""
+            SELECT
+                id_cliente AS id,
+                nm_cliente AS nome,
+                contato_cliente AS contato,
+                email_cliente AS email
+            FROM cliente
+            WHERE id_cliente = %s
+        """, (cliente_id,))
+
+        cliente = cursor.fetchone()
+
+        if not cliente:
+            abort(404)
+
+        return render_template(
+            "dashboard/info-cliente.html",
+            cliente=cliente
+        )
+
+    finally:
+        cursor.close()
+        conexao.close()
 
 
-@dashboard_bp.route("/editar-cliente", methods=["GET", "POST"])
-def editar_cliente():
+# ==================================================
+# EDITAR CLIENTE
+# ==================================================
+
+@dashboard_bp.route("/editar-cliente/<int:cliente_id>", methods=["GET", "POST"])
+def editar_cliente(cliente_id):
 
     verificar_gestor_global()
 
     mensagem = None
     erro = None
 
-    dados = {
-        "nome": "Cliente exemplo",
-        "contato": "contato@example.com"
-    }
+    conexao = conectar_banco()
+    cursor = conexao.cursor(dictionary=True)
 
-    if request.method == "POST":
+    try:
 
-        dados = request.form
+        cursor.execute("""
+            SELECT
+                id_cliente AS id,
+                nm_cliente AS nome,
+                contato_cliente AS contato,
+                email_cliente AS email
+            FROM cliente
+            WHERE id_cliente = %s
+        """, (cliente_id,))
 
-        nome = request.form.get("nome", "").strip()
-        contato = request.form.get("contato", "").strip()
+        cliente = cursor.fetchone()
 
-        if not nome:
-            erro = "O nome do cliente é obrigatório."
+        if not cliente:
+            abort(404)
 
-        else:
-            mensagem = "Alterações recebidas e validadas com sucesso!"
+        dados = cliente.copy()
 
-    return render_template(
-        "dashboard/editar-cliente.html",
-        mensagem=mensagem,
-        erro=erro,
-        dados=dados
-    )
+        if request.method == "POST":
+
+            dados = request.form
+
+            nome = request.form.get("nome", "").strip()
+            contato = request.form.get("contato", "").strip()
+
+            if not nome:
+
+                erro = "O nome do cliente é obrigatório."
+
+            else:
+
+                cursor.execute("""
+                    UPDATE cliente
+                    SET
+                        nm_cliente = %s,
+                        contato_cliente = %s
+                    WHERE id_cliente = %s
+                """, (nome, contato or "", cliente_id))
+
+                conexao.commit()
+
+                return redirect(
+                    url_for(
+                        "dashboard.info_cliente",
+                        cliente_id=cliente_id
+                    )
+                )
+
+        return render_template(
+            "dashboard/editar-cliente.html",
+            cliente=cliente,
+            mensagem=mensagem,
+            erro=erro,
+            dados=dados
+        )
+
+    except Exception:
+        conexao.rollback()
+        raise
+
+    finally:
+        cursor.close()
+        conexao.close()
 
 
 # ==================================================
-# PROPRIEDADE
+# EXCLUIR CLIENTE
+# ==================================================
+
+@dashboard_bp.route("/excluir-cliente/<int:cliente_id>", methods=["POST"])
+def excluir_cliente(cliente_id):
+
+    verificar_gestor_global()
+
+    conexao = conectar_banco()
+    cursor = conexao.cursor(dictionary=True)
+
+    try:
+
+        cursor.execute("""
+            SELECT
+                id_cliente AS id,
+                nm_cliente AS nome,
+                contato_cliente AS contato,
+                email_cliente AS email
+            FROM cliente
+            WHERE id_cliente = %s
+        """, (cliente_id,))
+
+        cliente = cursor.fetchone()
+
+        if not cliente:
+            abort(404)
+
+        cursor.execute("""
+            SELECT COUNT(*) AS total
+            FROM projeto
+            WHERE id_cliente = %s
+        """, (cliente_id,))
+
+        resultado = cursor.fetchone()
+        total_projetos = resultado["total"]
+
+        if total_projetos > 0:
+
+            erro = (
+                "Não é possível excluir este cliente porque "
+                "existem projetos vinculados a ele."
+            )
+
+            return render_template(
+                "dashboard/info-cliente.html",
+                cliente=cliente,
+                erro=erro
+            )
+
+        cursor.execute("""
+            DELETE FROM cliente
+            WHERE id_cliente = %s
+        """, (cliente_id,))
+
+        conexao.commit()
+
+        return redirect(url_for("dashboard.clientes"))
+
+    except Exception:
+        conexao.rollback()
+        raise
+
+    finally:
+        cursor.close()
+        conexao.close()
+
+
+# ==================================================
+# NOVA PROPRIEDADE
 # ==================================================
 
 @dashboard_bp.route(
@@ -619,7 +1241,6 @@ def editar_cliente():
 )
 def nova_propriedade(projeto_id):
 
-    # Verifica se o usuário é gestor ativo do projeto
     verificar_gestor_no_projeto(projeto_id)
 
     mensagem = None
@@ -631,7 +1252,6 @@ def nova_propriedade(projeto_id):
 
     try:
 
-        # Busca o projeto para exibir seu nome na tela
         cursor.execute(
             """
             SELECT
@@ -664,9 +1284,11 @@ def nova_propriedade(projeto_id):
             ]
 
             if not nome or not tipo:
+
                 erro = "Preencha os campos obrigatórios."
 
             elif tipo not in tipos_validos:
+
                 erro = "Selecione um tipo de propriedade válido."
 
             else:
@@ -727,7 +1349,6 @@ def ambientes(propriedade_id):
 
     try:
 
-        # Busca a propriedade e verifica o vínculo do usuário
         cursor.execute(
             """
             SELECT
@@ -752,7 +1373,6 @@ def ambientes(propriedade_id):
         if not propriedade:
             abort(404)
 
-        # Busca os ambientes pertencentes à propriedade
         cursor.execute(
             """
             SELECT
@@ -798,7 +1418,6 @@ def novo_ambiente(propriedade_id):
 
     try:
 
-        # Verifica se o usuário é gestor ativo do projeto
         cursor.execute(
             """
             SELECT
@@ -832,6 +1451,7 @@ def novo_ambiente(propriedade_id):
             tipo = request.form.get("tipo", "").strip()
 
             if not nome:
+
                 erro = "O nome do ambiente é obrigatório."
 
             else:
@@ -893,7 +1513,6 @@ def editar_ambiente(ambiente_id):
 
     try:
 
-        # Busca o ambiente e verifica a permissão do gestor
         cursor.execute(
             """
             SELECT
@@ -942,6 +1561,7 @@ def editar_ambiente(ambiente_id):
             }
 
             if not nome:
+
                 erro = "O nome do ambiente é obrigatório."
 
             else:
@@ -1002,8 +1622,6 @@ def excluir_ambiente(ambiente_id):
 
     try:
 
-        # Verifica se o ambiente pertence a um projeto
-        # no qual o usuário é gestor ativo
         cursor.execute(
             """
             SELECT
@@ -1059,161 +1677,392 @@ def excluir_ambiente(ambiente_id):
 # HISTÓRICO DO PROJETO
 # ==================================================
 
-@dashboard_bp.get("/historico")
 @dashboard_bp.get("/projeto/<int:projeto_id>/historico")
-def historico(projeto_id=1):
+def historico(projeto_id):
 
-    projeto_atual = buscar_projeto(projeto_id)
+    conexao = conectar_banco()
+    cursor = conexao.cursor(dictionary=True)
 
-    historico_projeto = HISTORICO_PROJETOS.get(projeto_id, [])
+    try:
 
-    return render_template(
-        "dashboard/historico.html",
-        projeto=projeto_atual,
-        historico=historico_projeto
-    )
+        cursor.execute("""
+            SELECT
+                p.id_projeto AS id,
+                p.nm_projeto AS nome
+            FROM projeto p
+
+            INNER JOIN vinculo_projeto_usuario v
+                ON p.id_projeto = v.id_projeto
+
+            WHERE p.id_projeto = %s
+              AND v.id_user = %s
+              AND v.ativo = 1
+            LIMIT 1
+        """, (projeto_id, session["id_user"]))
+
+        projeto_atual = cursor.fetchone()
+
+        if not projeto_atual:
+            abort(404)
+
+        cursor.execute("""
+            SELECT
+                historico.tipo,
+                historico.data,
+                historico.descricao,
+                historico.responsavel
+            FROM (
+                SELECT
+                    eh.acao_evento AS tipo,
+                    COALESCE(
+                        eh.data_evento,
+                        DATE(eh.criado_em)
+                    ) AS data,
+                    eh.desc_evento AS descricao,
+                    COALESCE(
+                        u.nm_user,
+                        'Usuário não identificado'
+                    ) AS responsavel,
+                    eh.criado_em AS ordem_data
+
+                FROM evento_historico eh
+
+                LEFT JOIN vinculo_projeto_usuario v
+                    ON eh.id_vinculo = v.id_vinculo
+
+                LEFT JOIN usuario u
+                    ON v.id_user = u.id_user
+
+                WHERE eh.id_projeto = %s
+
+                UNION ALL
+
+                SELECT
+                    'Comentário' AS tipo,
+                    DATE(c.criado_em) AS data,
+                    c.texto_comentario AS descricao,
+                    COALESCE(
+                        u.nm_user,
+                        'Usuário não identificado'
+                    ) AS responsavel,
+                    c.criado_em AS ordem_data
+
+                FROM comentario c
+
+                LEFT JOIN vinculo_projeto_usuario v
+                    ON c.id_vinculo = v.id_vinculo
+
+                LEFT JOIN usuario u
+                    ON v.id_user = u.id_user
+
+                WHERE c.id_projeto = %s
+            ) AS historico
+
+            ORDER BY historico.data DESC, historico.ordem_data DESC
+        """, (projeto_id, projeto_id))
+
+        historico_projeto = cursor.fetchall()
+
+        return render_template(
+            "dashboard/historico.html",
+            projeto=projeto_atual,
+            historico=historico_projeto
+        )
+
+    finally:
+        cursor.close()
+        conexao.close()
 
 
 # ==================================================
 # NOVO EVENTO
 # ==================================================
 
-@dashboard_bp.route("/novo-evento", methods=["GET", "POST"])
 @dashboard_bp.route(
     "/projeto/<int:projeto_id>/novo-evento",
     methods=["GET", "POST"]
 )
-def novo_evento(projeto_id=1):
+def novo_evento(projeto_id):
 
     mensagem = None
     erro = None
     dados = {}
 
-    projeto_atual = buscar_projeto(projeto_id)
+    conexao = conectar_banco()
+    cursor = conexao.cursor(dictionary=True)
 
-    if request.method == "POST":
+    try:
 
-        dados = request.form
+        cursor.execute("""
+            SELECT
+                p.id_projeto AS id,
+                p.nm_projeto AS nome,
+                c.nm_cliente AS cliente,
+                v.id_vinculo
+            FROM projeto p
 
-        titulo = request.form.get("titulo", "").strip()
-        data = request.form.get("data", "").strip()
-        descricao = request.form.get("descricao", "").strip()
+            INNER JOIN cliente c
+                ON p.id_cliente = c.id_cliente
 
-        if not titulo or not data or not descricao:
-            erro = "Preencha todos os campos obrigatórios."
+            INNER JOIN vinculo_projeto_usuario v
+                ON p.id_projeto = v.id_projeto
 
-        else:
+            WHERE p.id_projeto = %s
+              AND v.id_user = %s
+              AND v.ativo = 1
+            LIMIT 1
+        """, (projeto_id, session["id_user"]))
 
-            adicionar_historico(
-                projeto_id,
-                "Evento",
-                data,
-                f"{titulo}: {descricao}"
-            )
+        projeto_atual = cursor.fetchone()
 
-            mensagem = "Evento registrado com sucesso!"
+        if not projeto_atual:
+            abort(404)
 
-    return render_template(
-        "dashboard/novo-evento.html",
-        projeto=projeto_atual,
-        projeto_id=projeto_id,
-        mensagem=mensagem,
-        erro=erro,
-        dados=dados
-    )
+        if request.method == "POST":
+
+            dados = request.form
+
+            titulo = request.form.get("titulo", "").strip()
+            data = request.form.get("data", "").strip()
+            descricao = request.form.get("descricao", "").strip()
+
+            if not titulo or not data or not descricao:
+
+                erro = "Preencha todos os campos obrigatórios."
+
+            else:
+
+                cursor.execute("""
+                    INSERT INTO evento_historico (
+                        id_projeto,
+                        id_vinculo,
+                        acao_evento,
+                        desc_evento,
+                        data_evento
+                    )
+                    VALUES (%s, %s, %s, %s, %s)
+                """, (
+                    projeto_id,
+                    projeto_atual["id_vinculo"],
+                    "Evento",
+                    f"{titulo}: {descricao}",
+                    data
+                ))
+
+                conexao.commit()
+
+                return redirect(
+                    url_for(
+                        "dashboard.historico",
+                        projeto_id=projeto_id
+                    )
+                )
+
+        return render_template(
+            "dashboard/novo-evento.html",
+            projeto=projeto_atual,
+            projeto_id=projeto_id,
+            mensagem=mensagem,
+            erro=erro,
+            dados=dados
+        )
+
+    except Exception:
+        conexao.rollback()
+        raise
+
+    finally:
+        cursor.close()
+        conexao.close()
 
 
 # ==================================================
 # NOVO COMENTÁRIO
 # ==================================================
 
-@dashboard_bp.route("/novo-comentario", methods=["GET", "POST"])
 @dashboard_bp.route(
     "/projeto/<int:projeto_id>/novo-comentario",
     methods=["GET", "POST"]
 )
-def novo_comentario(projeto_id=1):
+def novo_comentario(projeto_id):
 
     mensagem = None
     erro = None
     dados = {}
 
-    projeto_atual = buscar_projeto(projeto_id)
+    conexao = conectar_banco()
+    cursor = conexao.cursor(dictionary=True)
 
-    if request.method == "POST":
+    try:
 
-        dados = request.form
+        cursor.execute("""
+            SELECT
+                p.id_projeto AS id,
+                p.nm_projeto AS nome,
+                v.id_vinculo
+            FROM projeto p
 
-        comentario = request.form.get("comentario", "").strip()
+            INNER JOIN vinculo_projeto_usuario v
+                ON p.id_projeto = v.id_projeto
 
-        if not comentario:
-            erro = "Escreva um comentário antes de publicar."
+            WHERE p.id_projeto = %s
+              AND v.id_user = %s
+              AND v.ativo = 1
+            LIMIT 1
+        """, (projeto_id, session["id_user"]))
 
-        else:
+        projeto_atual = cursor.fetchone()
 
-            adicionar_historico(
-                projeto_id,
-                "Comentário",
-                "",
-                comentario
-            )
+        if not projeto_atual:
+            abort(404)
 
-            mensagem = "Comentário registrado com sucesso!"
+        if request.method == "POST":
 
-    return render_template(
-        "dashboard/novo-comentario.html",
-        projeto=projeto_atual,
-        projeto_id=projeto_id,
-        mensagem=mensagem,
-        erro=erro,
-        dados=dados
-    )
+            dados = request.form
+
+            comentario_texto = request.form.get(
+                "comentario", ""
+            ).strip()
+
+            if not comentario_texto:
+
+                erro = "Escreva um comentário antes de publicar."
+
+            else:
+
+                cursor.execute("""
+                    INSERT INTO comentario (
+                        id_projeto,
+                        id_vinculo,
+                        texto_comentario
+                    )
+                    VALUES (%s, %s, %s)
+                """, (
+                    projeto_id,
+                    projeto_atual["id_vinculo"],
+                    comentario_texto
+                ))
+
+                conexao.commit()
+
+                return redirect(
+                    url_for(
+                        "dashboard.historico",
+                        projeto_id=projeto_id
+                    )
+                )
+
+        return render_template(
+            "dashboard/novo-comentario.html",
+            projeto=projeto_atual,
+            projeto_id=projeto_id,
+            mensagem=mensagem,
+            erro=erro,
+            dados=dados
+        )
+
+    except Exception:
+        conexao.rollback()
+        raise
+
+    finally:
+        cursor.close()
+        conexao.close()
 
 
 # ==================================================
 # NOVA DECISÃO
 # ==================================================
 
-@dashboard_bp.route("/nova-decisao", methods=["GET", "POST"])
 @dashboard_bp.route(
     "/projeto/<int:projeto_id>/nova-decisao",
     methods=["GET", "POST"]
 )
-def nova_decisao(projeto_id=1):
+def nova_decisao(projeto_id):
 
     mensagem = None
     erro = None
     dados = {}
 
-    projeto_atual = buscar_projeto(projeto_id)
+    conexao = conectar_banco()
+    cursor = conexao.cursor(dictionary=True)
 
-    if request.method == "POST":
+    try:
 
-        dados = request.form
+        cursor.execute("""
+            SELECT
+                p.id_projeto AS id,
+                p.nm_projeto AS nome,
+                v.id_vinculo
+            FROM projeto p
 
-        titulo = request.form.get("titulo", "").strip()
-        descricao = request.form.get("descricao", "").strip()
-        data = request.form.get("data", "").strip()
+            INNER JOIN vinculo_projeto_usuario v
+                ON p.id_projeto = v.id_projeto
 
-        if not titulo or not descricao or not data:
-            erro = "Preencha todos os campos obrigatórios."
+            WHERE p.id_projeto = %s
+              AND v.id_user = %s
+              AND v.ativo = 1
+            LIMIT 1
+        """, (projeto_id, session["id_user"]))
 
-        else:
+        projeto_atual = cursor.fetchone()
 
-            adicionar_historico(
-                projeto_id,
-                "Decisão",
-                data,
-                f"{titulo}: {descricao}"
-            )
+        if not projeto_atual:
+            abort(404)
 
-            mensagem = "Decisão registrada com sucesso!"
+        if request.method == "POST":
 
-    return render_template(
-        "dashboard/nova-decisao.html",
-        projeto=projeto_atual,
-        projeto_id=projeto_id,
-        mensagem=mensagem,
-        erro=erro,
-        dados=dados
-    )
+            dados = request.form
+
+            titulo = request.form.get("titulo", "").strip()
+            descricao = request.form.get("descricao", "").strip()
+            data = request.form.get("data", "").strip()
+
+            if not titulo or not descricao or not data:
+
+                erro = "Preencha todos os campos obrigatórios."
+
+            else:
+
+                cursor.execute("""
+                    INSERT INTO evento_historico (
+                        id_projeto,
+                        id_vinculo,
+                        acao_evento,
+                        desc_evento,
+                        data_evento
+                    )
+                    VALUES (%s, %s, %s, %s, %s)
+                """, (
+                    projeto_id,
+                    projeto_atual["id_vinculo"],
+                    "Decisão",
+                    f"{titulo}: {descricao}",
+                    data
+                ))
+
+                conexao.commit()
+
+                return redirect(
+                    url_for(
+                        "dashboard.historico",
+                        projeto_id=projeto_id
+                    )
+                )
+
+        return render_template(
+            "dashboard/nova-decisao.html",
+            projeto=projeto_atual,
+            projeto_id=projeto_id,
+            mensagem=mensagem,
+            erro=erro,
+            dados=dados
+        )
+
+    except Exception:
+        conexao.rollback()
+        raise
+
+    finally:
+        cursor.close()
+        conexao.close()

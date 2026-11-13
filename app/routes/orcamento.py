@@ -164,6 +164,7 @@ def listar_orcamentos(id_propiedade):
 # CRIAR NOVO ORÇAMENTO OU NOVA VERSÃO
 # ==================================================
 
+
 @orcamento_bp.route(
     "/propriedade/<int:id_propiedade>/orcamento/novo",
     methods=["GET", "POST"]
@@ -355,6 +356,22 @@ def novo_orcamento(id_propiedade):
 
                 if validade:
                     datetime.strptime(validade, "%Y-%m-%d")
+
+               
+                # --------------------------------------------------
+                # BLOQUEAR PROPRIEDADE PARA EVITAR CONFLITO DE VERSÃO
+                # --------------------------------------------------
+
+                cursor.execute("""
+                    SELECT id_propiedade
+                    FROM propriedade
+                    WHERE id_propiedade = %s
+                    FOR UPDATE
+                """, (id_propiedade,))
+
+                # Consumir o resultado da consulta
+                # O bloqueio continua ativo até o commit ou rollback
+                cursor.fetchone()
 
                 # --------------------------------------------------
                 # CALCULAR PRÓXIMA VERSÃO

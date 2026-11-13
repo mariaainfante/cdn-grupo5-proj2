@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>Conatus</title>
 
     <link rel="icon" type="image/png"
@@ -55,17 +56,18 @@
 
 <main class="conteudo">
 
-    <a href="{{ url_for('dashboard.projeto') }}" class="link-voltar">
+    <a href="{{ url_for('dashboard.projeto', projeto_id=projeto.id_projeto) }}"
+       class="link-voltar">
         Voltar para o projeto
     </a>
 
     <div class="cabecalho-participantes">
         <div>
             <h1 class="titulo">Participantes</h1>
-            <p>Projeto --nome--</p>
+            <p>Projeto {{ projeto.nm_projeto }}</p>
         </div>
 
-        <a href="{{ url_for('dashboard.adicionar_participante') }}"
+        <a href="{{ url_for('dashboard.adicionar_participante', projeto_id=projeto.id_projeto) }}"
            class="botao-adicionar">
             Adicionar participante
         </a>
@@ -73,76 +75,90 @@
 
     <section class="lista-participantes">
 
-        <div class="participante">
-            <div class="participante__principal">
-                <h2 class="participante__nome">Gestor</h2>
-                <span class="participante__situacao">Ativo</span>
-            </div>
+        {% if participantes %}
 
-            <div class="participante__informacoes">
-                <div>
-                    <span class="participante__rotulo">Email</span>
-                    <span>gestor@example.com</span>
+            {% for participante in participantes %}
+
+                <div class="participante">
+
+                    <div class="participante__principal">
+                        <h2 class="participante__nome">
+                            {{ participante.nome }}
+                        </h2>
+
+                        {% if participante.ativo %}
+                            <span class="participante__situacao">Ativo</span>
+                        {% else %}
+                            <span class="participante__situacao participante__situacao--inativo">
+                                Inativo
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="participante__informacoes">
+
+                        <div>
+                            <span class="participante__rotulo">Email</span>
+                            <span>{{ participante.email }}</span>
+                        </div>
+
+                        <div>
+                            <span class="participante__rotulo">Papel no projeto</span>
+                            <span>{{ participante.papel|capitalize }}</span>
+                        </div>
+
+                    </div>
+
+                    
+                    <div class="participante__acoes">
+
+                        <a href="{{ url_for(
+                            'dashboard.alterar_papel',
+                            projeto_id=projeto.id_projeto,
+                            participante_id=participante.id_user
+                        ) }}">
+                            Alterar papel
+                        </a>
+
+                        {% if participante.ativo %}
+
+                            <a href="{{ url_for(
+                                'dashboard.desativar_participante',
+                                projeto_id=projeto.id_projeto,
+                                participante_id=participante.id_user
+                            ) }}">
+                                Desativar
+                            </a>
+
+                        {% else %}
+
+                            <form
+                                action="{{ url_for(
+                                    'dashboard.reativar_participante',
+                                    projeto_id=projeto.id_projeto,
+                                    participante_id=participante.id_user
+                                ) }}"
+                                method="POST"
+                            >
+                                <button type="submit" class="botao-acao">
+                                    Reativar
+                                </button>
+                            </form>
+
+                        {% endif %}
+
+                    </div>
+
+
                 </div>
 
-                <div>
-                    <span class="participante__rotulo">Papel no projeto</span>
-                    <span>Gestor</span>
-                </div>
-            </div>
+            {% endfor %}
 
-            <p class="aviso">
-               Aviso...
-            </p>
-        </div>
+        {% else %}
 
-        <div class="participante">
-            <div class="participante__principal">
-                <h2 class="participante__nome">Participante</h2>
-                <span class="participante__situacao">Ativo</span>
-            </div>
+            <p>Nenhum participante vinculado a este projeto.</p>
 
-            <div class="participante__informacoes">
-                <div>
-                    <span class="participante__rotulo">Email</span>
-                    <span>participante@example.com</span>
-                </div>
-
-                <div>
-                    <span class="participante__rotulo">Papel no projeto</span>
-                    <span>Arquiteto</span>
-                </div>
-            </div>
-
-            <div class="participante__acoes">
-                <a href="{{ url_for('dashboard.alterar_papel') }}">Alterar papel</a>
-                <a href="{{ url_for('dashboard.desativar_participante') }}">Desativar</a>
-            </div>
-        </div>
-
-        <div class="participante">
-            <div class="participante__principal">
-                <h2 class="participante__nome">Participante inativo</h2>
-                <span class="participante__situacao participante__situacao--inativo">Inativo</span>
-            </div>
-
-            <div class="participante__informacoes">
-                <div>
-                    <span class="participante__rotulo">Email</span>
-                    <span>participante@example.com</span>
-                </div>
-
-                <div>
-                    <span class="participante__rotulo">Papel no projeto</span>
-                    <span>Arquiteto</span>
-                </div>
-            </div>
-
-            <div class="participante__acoes">
-                <a href="{{ url_for('dashboard.alterar_papel') }}">Alterar papel</a>
-                <a href="{{ url_for('dashboard.desativar_participante') }}">Desativar</a>
-            </div>
-        </div>
+        {% endif %}
 
     </section>
 

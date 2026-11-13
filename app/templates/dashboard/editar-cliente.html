@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Editar cliente | Conatus</title>
+    <title>Conatus</title>
 
     <link rel="icon" type="image/png"
           href="{{ url_for('static', filename='img/conatus-icone-1024 (1).png') }}">
@@ -59,7 +59,7 @@
 
     <main class="conteudo">
 
-        <a href="{{ url_for('dashboard.info_cliente') }}" class="link-voltar">
+        <a href="{{ url_for('dashboard.info_cliente', cliente_id=cliente.id) }}" class="link-voltar">
             Voltar para o cliente
         </a>
 
@@ -70,12 +70,18 @@
             </p>
         </div>
 
+        {% if erro %}
+            <div class="alert alert-danger" role="alert">
+                {{ erro }}
+            </div>
+        {% endif %}
+
         <div class="formulario-container">
 
             <form
                 class="formulario bg-white border rounded-3 p-3 p-md-4"
-                action="{{ url_for('dashboard.editar_cliente') }}"
-                method="post"
+                action="{{ url_for('dashboard.editar_cliente', cliente_id=cliente.id) }}"
+                method="POST"
             >
 
                 <div class="mb-3">
@@ -88,7 +94,7 @@
                         id="nome"
                         name="nome"
                         class="form-control campo"
-                        value="{{ dados.nome if dados else 'Cliente exemplo' }}"
+                        value="{{ dados.nome }}"
                         required
                     >
                 </div>
@@ -103,7 +109,7 @@
                         id="contato"
                         name="contato"
                         class="form-control campo"
-                        value="{{ dados.contato if dados else 'contato@example.com' }}"
+                        value="{{ dados.contato or '' }}"
                     >
                 </div>
 
@@ -112,7 +118,7 @@
                         Salvar
                     </button>
 
-                    <a href="{{ url_for('dashboard.info_cliente') }}" class="cancelar">
+                    <a href="{{ url_for('dashboard.info_cliente', cliente_id=cliente.id) }}" class="cancelar">
                         Cancelar
                     </a>
                 </div>

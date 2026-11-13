@@ -93,8 +93,8 @@
                         <div class="lista__campo">
                             <span class="rotulo">Nome</span>
 
-                            <a href="{{ url_for('dashboard.info_cliente') }}"
-                               class="link-projeto">
+                            <a href="{{ url_for('dashboard.info_cliente', cliente_id=cliente.id) }}"
+                            class="link-projeto">
                                 {{ cliente.nome }}
                             </a>
                         </div>

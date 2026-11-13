@@ -56,8 +56,10 @@ def login():
                     session["nm_user"] = usuario_bd["nm_user"]
                     session["papel_global"] = usuario_bd["papel_global"]
 
-                    return redirect(url_for("dashboard.gestor"))
+                    if usuario_bd["papel_global"] == "gestor":
+                        return redirect(url_for("dashboard.gestor"))
 
+                    return redirect(url_for("dashboard.aguardando_vinculo"))
             mensagem = "Usuário ou senha incorretos."
 
             return render_template("auth/login.html", mensagem=mensagem)
@@ -96,6 +98,13 @@ def cadastro():
         senha = request.form.get("senha", "")
         confirmar_senha = request.form.get("confirmar-senha", "")
         funcao = request.form.get("funcao", "").strip()
+
+        funcoes_permitidas = ["comercial", "tecnico", "arquiteto"]
+
+        if funcao not in funcoes_permitidas:
+            mensagem = "Selecione uma função válida."
+            return render_template("auth/cadastro.html", mensagem=mensagem)
+
         termos = request.form.get("termos")
 
         if not nome or not email or not telefone or not senha or not confirmar_senha or not funcao:
@@ -142,11 +151,12 @@ def cadastro():
                     telefone_user,
                     password_hash,
                     papel_global,
+                    funcao_cadastro,
                     ativo
                 )
-                VALUES (%s, %s, %s, %s, 'padrao', 1)
+                VALUES (%s, %s, %s, %s, 'padrao', %s, 1)
                 """,
-                (nome, email, telefone, senha_hash)
+                (nome, email, telefone, senha_hash, funcao)
             )
 
             conexao.commit()
