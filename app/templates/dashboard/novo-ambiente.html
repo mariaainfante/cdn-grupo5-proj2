@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Conatus</title>
+    <title>Conatus - Novo ambiente</title>
 
     <link rel="icon" type="image/png"
           href="{{ url_for('static', filename='img/conatus-icone-1024 (1).png') }}">
@@ -55,7 +55,8 @@
 
     <main class="conteudo">
 
-        <a href="{{ url_for('dashboard.ambientes') }}" class="link-voltar">
+        <a href="{{ url_for('dashboard.ambientes', propriedade_id=propriedade.id) }}"
+           class="link-voltar">
             Voltar para ambientes
         </a>
 
@@ -72,11 +73,11 @@
             </span>
 
             <h2 class="ambiente-propriedade__nome">
-                Propriedade deste projeto
+                {{ propriedade.nome }}
             </h2>
 
             <p class="ambiente-propriedade__descricao">
-                O ambiente será cadastrado nesta propriedade.
+                {{ propriedade.endereco or 'Endereço não informado' }}
             </p>
         </section>
 
@@ -92,7 +93,10 @@
             </div>
         {% endif %}
 
-        <form action="{{ url_for('dashboard.novo_ambiente') }}" method="POST">
+        <form
+            action="{{ url_for('dashboard.novo_ambiente', propriedade_id=propriedade.id) }}"
+            method="POST"
+        >
 
             <section class="formulario-ambiente">
 
@@ -120,87 +124,48 @@
 
                     <div class="col-md-6">
                         <label for="tipo" class="form-label">
-                            Tipo de ambiente <span class="obrigatorio">*</span>
+                            Tipo de ambiente
                         </label>
 
-                        <select class="form-select" id="tipo" name="tipo" required>
-                            <option value="" disabled
+                        <select class="form-select" id="tipo" name="tipo">
+
+                            <option value=""
                                 {% if not dados or not dados.tipo %}selected{% endif %}>
                                 Selecione o tipo
                             </option>
 
                             <option value="sala" {% if dados and dados.tipo == 'sala' %}selected{% endif %}>Sala</option>
+
                             <option value="cozinha" {% if dados and dados.tipo == 'cozinha' %}selected{% endif %}>Cozinha</option>
+
                             <option value="quarto" {% if dados and dados.tipo == 'quarto' %}selected{% endif %}>Quarto</option>
+
                             <option value="banheiro" {% if dados and dados.tipo == 'banheiro' %}selected{% endif %}>Banheiro</option>
+
                             <option value="escritorio" {% if dados and dados.tipo == 'escritorio' %}selected{% endif %}>Escritório</option>
+
                             <option value="area_externa" {% if dados and dados.tipo == 'area_externa' %}selected{% endif %}>Área externa</option>
+
                             <option value="outro" {% if dados and dados.tipo == 'outro' %}selected{% endif %}>Outro</option>
+
                         </select>
                     </div>
 
-                    <div class="col-md-6">
-                        <label for="area" class="form-label">
-                            Área aproximada (m²)
-                        </label>
-
-                        <input
-                            type="number"
-                            class="form-control"
-                            id="area"
-                            name="area"
-                            min="0.01"
-                            step="0.01"
-                            placeholder="Ex.: 25"
-                            value="{{ dados.area if dados else '' }}"
-                        >
-                    </div>
-
-                    <div class="col-md-6">
-                        <label for="caracteristicas" class="form-label">
-                            Características
-                        </label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="caracteristicas"
-                            name="caracteristicas"
-                            placeholder="Ex.: Ar-condicionado, TV"
-                            value="{{ dados.caracteristicas if dados else '' }}"
-                        >
-
-                        <small class="form-text">
-                            Informe os recursos e elementos presentes no ambiente.
-                        </small>
-                    </div>
-
-                    <div class="col-12">
-                        <label for="observacoes" class="form-label">
-                            Observações
-                        </label>
-
-                        <textarea
-                            class="form-control"
-                            id="observacoes"
-                            name="observacoes"
-                            rows="4"
-                            placeholder="Adicione informações complementares sobre o ambiente..."
-                        >{{ dados.observacoes if dados else '' }}</textarea>
-                    </div>
-
                 </div>
+
             </section>
 
             <div class="acoes-ambiente">
+
                 <button type="submit" class="botao-salvar-ambiente">
                     Salvar ambiente
                 </button>
 
-                <a href="{{ url_for('dashboard.ambientes') }}"
+                <a href="{{ url_for('dashboard.ambientes', propriedade_id=propriedade.id) }}"
                    class="botao-cancelar-ambiente">
                     Cancelar
                 </a>
+
             </div>
 
         </form>

@@ -49,9 +49,9 @@
             <div class="conta">
                 <span class="usuario">Gestor</span>
 
-                <button type="button" class="botao-sair">
+                <a href="{{ url_for('auth.logout') }}" class="botao-sair">
                     Sair
-                </button>
+                </a>
             </div>
 
         </div>
@@ -64,7 +64,7 @@
         </a>
 
         <div class="cabecalho-projeto">
-            <h1 class="titulo">Projeto</h1>
+            <h1 class="titulo">{{ projeto.nome }}</h1>
 
             <div class="acoes-projeto">
 
@@ -76,19 +76,17 @@
                     Histórico
                 </a>
 
-                {% if propriedade %}
-                    <a href="{{ url_for('dashboard.ambientes') }}" class="botao-secundario">
-                        Propriedade e ambientes
-                    </a>
-                {% else %}
-                    <a href="{{ url_for('dashboard.nova_propriedade') }}" class="botao-secundario">
+                {% if projeto.papel == "gestor" %}
+                    <a href="{{ url_for('dashboard.nova_propriedade', projeto_id=projeto.id) }}"
+                       class="botao-secundario">
                         Cadastrar propriedade
                     </a>
-                {% endif %}
 
-                <a href="{{ url_for('dashboard.editar_projeto') }}" class="botao-editar">
-                    Editar projeto
-                </a>
+                    <a href="{{ url_for('dashboard.editar_projeto', projeto_id=projeto.id) }}"
+                       class="botao-editar">
+                        Editar projeto
+                    </a>
+                {% endif %}
 
             </div>
         </div>
@@ -97,7 +95,16 @@
 
             <div class="secao-titulo">
                 <h2>Dados do projeto</h2>
-                <span class="selo">Em andamento</span>
+
+                <span class="selo">
+                    {% if projeto.estado == "planejado" %}
+                        Planejado
+                    {% elif projeto.estado == "em_andamento" %}
+                        Em andamento
+                    {% elif projeto.estado == "concluido" %}
+                        Concluído
+                    {% endif %}
+                </span>
             </div>
 
             <div class="dados__grade">
@@ -119,24 +126,30 @@
                 </div>
 
                 <div class="campo-dado">
-                    <span class="campo-dado__rotulo">Data de criação (UTC)</span>
-                    <span class="campo-dado__valor">28/10/2026 07:00:00</span>
+                    <span class="campo-dado__rotulo">Data de criação</span>
+                    <span class="campo-dado__valor">
+                        {{ projeto.criado_em.strftime("%d/%m/%Y %H:%M:%S") if projeto.criado_em else "Não informada" }}
+                    </span>
                 </div>
 
                 <div class="campo-dado">
                     <span class="campo-dado__rotulo">Início previsto</span>
-                    <span class="campo-dado__valor">28/10/2026</span>
+                    <span class="campo-dado__valor">
+                        {{ projeto.inicio.strftime("%d/%m/%Y") if projeto.inicio else "Não definido" }}
+                    </span>
                 </div>
 
                 <div class="campo-dado">
                     <span class="campo-dado__rotulo">Término previsto</span>
-                    <span class="campo-dado__valor">18/12/2026</span>
+                    <span class="campo-dado__valor">
+                        {{ projeto.termino.strftime("%d/%m/%Y") if projeto.termino else "Não definido" }}
+                    </span>
                 </div>
 
                 <div class="campo-dado campo-dado--completo">
                     <span class="campo-dado__rotulo">Descrição</span>
                     <span class="campo-dado__valor">
-                        Projeto ilustrativo de automação residencial. Dados fictícios para visualização do layout.
+                        {{ projeto.descricao }}
                     </span>
                 </div>
 
@@ -144,46 +157,63 @@
 
         </section>
 
-        {% if propriedade %}
+        <section class="dados dados--propriedade">
 
-            <section class="dados dados--propriedade">
+            <div class="secao-titulo">
+                <h2>Propriedades</h2>
+            </div>
 
-                <div class="secao-titulo">
-                    <h2>Propriedade</h2>
-                </div>
+            {% if propriedades %}
 
-                <div class="dados__grade">
+                {% for propriedade in propriedades %}
 
-                    <div class="campo-dado">
-                        <span class="campo-dado__rotulo">Nome</span>
-                        <span class="campo-dado__valor">{{ propriedade.nome }}</span>
+                    <div class="dados__grade">
+
+                        <div class="campo-dado">
+                            <span class="campo-dado__rotulo">Nome</span>
+                            <span class="campo-dado__valor">
+                                {{ propriedade.nome }}
+                            </span>
+                        </div>
+
+                        <div class="campo-dado">
+                            <span class="campo-dado__rotulo">Tipo</span>
+                            <span class="campo-dado__valor">
+                                {{ propriedade.tipo }}
+                            </span>
+                        </div>
+
+                        <div class="campo-dado campo-dado--completo">
+                            <span class="campo-dado__rotulo">Endereço</span>
+                            <span class="campo-dado__valor">
+                                {{ propriedade.endereco or "Não informado" }}
+                            </span>
+                        </div>
+
+                        <a href="{{ url_for('dashboard.ambientes', propriedade_id=propriedade.id) }}">
+                            Ver ambientes
+                        </a>
+
+                        <a href="{{ url_for('orcamento.listar_orcamentos', id_propiedade=propriedade.id) }}"
+                           class="botao-secundario">
+                            Orçamentos
+                        </a>
+
                     </div>
 
-                    <div class="campo-dado">
-                        <span class="campo-dado__rotulo">Tipo</span>
-                        <span class="campo-dado__valor">{{ propriedade.tipo }}</span>
-                    </div>
+                    {% if not loop.last %}
+                        <hr>
+                    {% endif %}
 
-                    <div class="campo-dado">
-                        <span class="campo-dado__rotulo">Endereço</span>
-                        <span class="campo-dado__valor">{{ propriedade.endereco }}</span>
-                    </div>
+                {% endfor %}
 
-                    <div class="campo-dado">
-                        <span class="campo-dado__rotulo">Cidade</span>
-                        <span class="campo-dado__valor">{{ propriedade.cidade }}</span>
-                    </div>
+            {% else %}
 
-                    <div class="campo-dado">
-                        <span class="campo-dado__rotulo">Área</span>
-                        <span class="campo-dado__valor">{{ propriedade.area }} m²</span>
-                    </div>
+                <p>Nenhuma propriedade cadastrada neste projeto.</p>
 
-                </div>
+            {% endif %}
 
-            </section>
-
-        {% endif %}
+        </section>
 
     </main>
 

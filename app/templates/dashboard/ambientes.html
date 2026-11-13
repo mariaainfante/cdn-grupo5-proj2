@@ -49,9 +49,9 @@
             <div class="conta">
                 <span class="usuario">Gestor</span>
 
-                <button type="button" class="botao-sair">
+                <a href="{{ url_for('auth.logout') }}" class="botao-sair">
                     Sair
-                </button>
+                </a>
             </div>
 
         </div>
@@ -59,7 +59,7 @@
 
     <main class="conteudo">
 
-        <a href="{{ url_for('dashboard.projeto') }}" class="link-voltar">
+        <a href="{{ url_for('dashboard.projeto', projeto_id=propriedade.id_projeto) }}" class="link-voltar">
             Voltar para o projeto
         </a>
 
@@ -71,7 +71,8 @@
                 </p>
             </div>
 
-            <a href="{{ url_for('dashboard.novo_ambiente') }}" class="botao-novo-ambiente">
+            <a href="{{ url_for('dashboard.novo_ambiente', propriedade_id=propriedade.id) }}"
+               class="botao-novo-ambiente">
                 Cadastrar ambiente
             </a>
         </div>
@@ -85,7 +86,7 @@
             </h2>
 
             <p class="resumo-propriedade__endereco">
-                {{ propriedade.endereco }}
+                {{ propriedade.endereco or 'Endereço não informado' }}
             </p>
 
         </section>
@@ -106,8 +107,6 @@
                 <div class="tabela-ambientes__cabecalho">
                     <span>Nome</span>
                     <span>Tipo</span>
-                    <span>Área</span>
-                    <span>Características</span>
                     <span>Ações</span>
                 </div>
 
@@ -124,22 +123,26 @@
 
                             <div>
                                 <span class="rotulo-ambiente">Tipo</span>
-                                <span>{{ ambiente.tipo }}</span>
-                            </div>
-
-                            <div>
-                                <span class="rotulo-ambiente">Área</span>
-                                <span>{{ ambiente.area }} m²</span>
-                            </div>
-
-                            <div>
-                                <span class="rotulo-ambiente">Características</span>
-                                <span>{{ ambiente.caracteristicas or 'Não informado' }}</span>
+                                <span>{{ ambiente.tipo or '-' }}</span>
                             </div>
 
                             <div class="acoes-lista">
-                                <a href="#" class="acao-editar">Editar</a>
-                                <a href="#" class="acao-excluir">Excluir</a>
+
+                                <a href="{{ url_for('dashboard.editar_ambiente', ambiente_id=ambiente.id) }}"
+                                   class="acao-editar">
+                                    Editar
+                                </a>
+
+                                <form method="POST"
+                                      action="{{ url_for('dashboard.excluir_ambiente', ambiente_id=ambiente.id) }}"
+                                      onsubmit="return confirm('Tem certeza que deseja excluir este ambiente?');">
+
+                                    <button type="submit" class="acao-excluir">
+                                        Excluir
+                                    </button>
+
+                                </form>
+
                             </div>
 
                         </div>

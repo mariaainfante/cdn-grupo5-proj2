@@ -48,9 +48,9 @@
             <div class="conta">
                 <span class="usuario">Gestor</span>
 
-                <button type="button" class="botao-sair">
+                <a href="{{ url_for('auth.logout') }}" class="botao-sair">
                     Sair
-                </button>
+                </a>
             </div>
 
         </div>
@@ -83,32 +83,52 @@
                 <div>Seu papel</div>
             </div>
 
-            <div class="lista__item">
+            {% for projeto in projetos %}
 
-                <div class="lista__campo">
-                    <span class="rotulo">Nome</span>
+                <div class="lista__item">
 
-                    <a href="{{ url_for('dashboard.projeto') }}" class="link-projeto">
-                        Projeto exemplo
-                    </a>
+                    <div class="lista__campo">
+                        <span class="rotulo">Nome</span>
+
+                        <a href="{{ url_for('dashboard.projeto', projeto_id=projeto.id) }}"
+                           class="link-projeto">
+                            {{ projeto.nome }}
+                        </a>
+                    </div>
+
+                    <div class="lista__campo">
+                        <span class="rotulo">Cliente</span>
+                        <span>{{ projeto.cliente }}</span>
+                    </div>
+
+                    <div class="lista__campo">
+                        <span class="rotulo">Estado</span>
+
+                        {% if projeto.estado == "planejado" %}
+                            <span>Planejado</span>
+                        {% elif projeto.estado == "em_andamento" %}
+                            <span>Em andamento</span>
+                        {% elif projeto.estado == "concluido" %}
+                            <span>Concluído</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="lista__campo">
+                        <span class="rotulo">Seu papel</span>
+                        <span>{{ projeto.papel|capitalize }}</span>
+                    </div>
+
                 </div>
 
-                <div class="lista__campo">
-                    <span class="rotulo">Cliente</span>
-                    <span>Cliente exemplo</span>
+            {% else %}
+
+                <div class="lista__item">
+                    <div class="lista__campo">
+                        <span>Nenhum projeto encontrado.</span>
+                    </div>
                 </div>
 
-                <div class="lista__campo">
-                    <span class="rotulo">Estado</span>
-                    <span>Em andamento</span>
-                </div>
-
-                <div class="lista__campo">
-                    <span class="rotulo">Seu papel</span>
-                    <span>Gestor</span>
-                </div>
-
-            </div>
+            {% endfor %}
 
         </div>
 

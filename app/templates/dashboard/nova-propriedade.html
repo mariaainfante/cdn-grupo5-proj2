@@ -54,7 +54,7 @@
 
 <main class="conteudo">
 
-    <a href="{{ url_for('dashboard.projeto') }}" class="link-voltar">
+    <a href="{{ url_for('dashboard.projeto', projeto_id=projeto.id) }}">
         Voltar para o projeto
     </a>
 
@@ -65,7 +65,7 @@
 
     <section class="propriedade-vinculada">
         <span class="propriedade-vinculada__rotulo">Projeto</span>
-        <h2 class="propriedade-vinculada__nome">Projeto -- nome --</h2>
+        {{ projeto.nome }}
     </section>
 
     {% if mensagem %}
@@ -80,9 +80,9 @@
         </div>
     {% endif %}
 
-    <form action="{{ url_for('dashboard.nova_propriedade') }}"
-          method="POST"
-          enctype="multipart/form-data">
+    <form action="{{ url_for('dashboard.nova_propriedade', projeto_id=projeto.id) }}"
+      method="POST"
+      enctype="multipart/form-data">
 
         <section class="formulario-propriedade">
 
@@ -210,7 +210,7 @@
                 Salvar propriedade
             </button>
 
-            <a href="{{ url_for('dashboard.projeto') }}" class="botao-cancelar-propriedade">
+            <a href="{{ url_for('dashboard.projeto', projeto_id=projeto.id) }}">
                 Cancelar
             </a>
         </div>

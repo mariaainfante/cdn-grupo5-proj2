@@ -34,6 +34,11 @@
     gap: 8px;
 }
 
+.acoes-projeto form {
+    margin: 0;
+}
+
+.botao-principal,
 .botao-secundario,
 .botao-editar {
     display: inline-flex;
@@ -46,9 +51,26 @@
     font-size: 12px;
     font-weight: 500;
     text-decoration: none;
-    transition: background 0.2s, color 0.2s;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
 
+/* Botão principal */
+.botao-principal,
+.botao-editar {
+    border: 1px solid var(--azul);
+    background: var(--azul);
+    color: #fff;
+}
+
+.botao-principal:hover,
+.botao-editar:hover {
+    border-color: #244d7d;
+    background: #244d7d;
+    color: #fff;
+}
+
+/* Botão secundário */
 .botao-secundario {
     border: 1px solid #d6d9dc;
     background: #fff;
@@ -59,18 +81,6 @@
     border-color: var(--azul);
     color: var(--azul);
     background: var(--azul-claro);
-}
-
-.botao-editar {
-    border: 1px solid var(--azul);
-    background: var(--azul);
-    color: #fff;
-}
-
-.botao-editar:hover {
-    border-color: #244d7d;
-    background: #244d7d;
-    color: #fff;
 }
 
 /* Blocos de informação */
@@ -157,6 +167,7 @@
         width: 100%;
     }
 
+    .botao-principal,
     .botao-secundario,
     .botao-editar {
         flex: 1;
@@ -183,6 +194,7 @@
         flex-direction: column;
     }
 
+    .botao-principal,
     .botao-secundario,
     .botao-editar {
         width: 100%;

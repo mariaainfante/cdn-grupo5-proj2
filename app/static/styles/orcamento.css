@@ -1,0 +1,333 @@
+
+/* =========================================
+   MÓDULO DE ORÇAMENTOS
+========================================= */
+
+/* Espaçamento entre seções */
+
+.dados {
+    margin-bottom: 20px;
+}
+
+/* Selo de status */
+
+.selo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 30px;
+    padding: 5px 12px;
+    border: 1px solid #d6d9dc;
+    border-radius: 5px;
+    background: var(--azul-claro);
+    color: var(--azul);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+/* Área de ações */
+
+.acoes-orcamento {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 22px;
+}
+
+.acoes-orcamento form {
+    margin: 0;
+}
+
+/* Tabela de itens */
+
+.tabela-orcamento {
+    width: 100%;
+    margin: 0;
+    border-collapse: collapse;
+    color: var(--texto);
+    font-size: 13px;
+}
+
+.tabela-orcamento thead th {
+    padding: 13px 15px;
+    border-bottom: 1px solid #deddd7;
+    background: var(--azul-claro);
+    color: var(--texto);
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.tabela-orcamento tbody td {
+    padding: 14px 15px;
+    border-bottom: 1px solid #e8e7e2;
+    vertical-align: middle;
+}
+
+.tabela-orcamento tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tabela-orcamento tfoot th {
+    padding: 16px 15px;
+    border-top: 1px solid #deddd7;
+    background: #faf9f6;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.tabela-orcamento th:not(:first-child),
+.tabela-orcamento td:not(:first-child) {
+    text-align: right;
+}
+
+/* Histórico */
+
+.historico-orcamento {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.historico-orcamento__item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 15px;
+    border: 1px solid #e8e7e2;
+    border-radius: 5px;
+    background: #fff;
+}
+
+.historico-orcamento__data {
+    color: var(--texto-suave);
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.historico-orcamento__acao {
+    color: var(--texto);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.historico-orcamento__observacao {
+    color: var(--texto-suave);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* Formulário de orçamento */
+
+.item-orcamento {
+    border-color: #deddd7 !important;
+    border-radius: 5px !important;
+    background: #fff;
+}
+
+.item-orcamento .form-label {
+    color: var(--texto-suave);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.item-orcamento .form-control,
+.dados .form-control {
+    border-color: #d6d9dc;
+    border-radius: 5px;
+    color: var(--texto);
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.item-orcamento .form-control:focus,
+.dados .form-control:focus {
+    border-color: var(--azul);
+    box-shadow: 0 0 0 3px rgba(47, 95, 154, 0.12);
+}
+
+/* Botões Bootstrap dentro do orçamento */
+
+.dados .btn-outline-primary {
+    border-color: var(--azul);
+    color: var(--azul);
+    font-size: 12px;
+}
+
+.dados .btn-outline-primary:hover {
+    background: var(--azul);
+    color: #fff;
+}
+
+.dados .btn-outline-danger {
+    font-size: 12px;
+}
+
+.dados .btn-outline-secondary {
+    font-size: 12px;
+}
+
+/* Total */
+
+#valor-total {
+    color: var(--azul);
+    font-weight: 700;
+}
+
+/* Mensagens */
+
+.alert {
+    border-radius: 5px;
+    font-size: 13px;
+}
+
+/* Celular */
+
+@media (max-width: 767px) {
+
+    .acoes-orcamento {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .acoes-orcamento form,
+    .acoes-orcamento button {
+        width: 100%;
+    }
+
+    .tabela-orcamento {
+        font-size: 12px;
+    }
+
+    .tabela-orcamento thead th,
+    .tabela-orcamento tbody td,
+    .tabela-orcamento tfoot th {
+        padding: 11px 9px;
+    }
+}
+
+
+/* Tela de novo orçamento */
+
+.descricao-orcamento {
+    margin-bottom: 20px;
+    color: var(--texto-suave);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.item-orcamento {
+    margin-bottom: 14px;
+    padding: 18px;
+    border: 1px solid #deddd7;
+    border-radius: 5px;
+    background: #fff;
+}
+
+.botao-remover {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 36px;
+    padding: 0 12px;
+    border: 1px solid #d6d9dc;
+    border-radius: 5px;
+    background: #fff;
+    color: #b54747;
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.botao-remover:hover {
+    border-color: #b54747;
+    background: #fff5f5;
+}
+
+.botao-adicionar {
+    margin-top: 5px;
+}
+
+.total-orcamento {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 24px;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #e8e7e2;
+    color: var(--texto);
+    font-size: 14px;
+}
+
+.total-orcamento strong {
+    color: var(--azul);
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.acoes-orcamento--final {
+    justify-content: flex-end;
+    margin-top: 22px;
+}
+
+@media (max-width: 767px) {
+
+    .item-orcamento {
+        padding: 15px;
+    }
+
+    .total-orcamento {
+        justify-content: space-between;
+    }
+
+    .acoes-orcamento--final {
+        flex-direction: column-reverse;
+    }
+
+    .acoes-orcamento--final a,
+    .acoes-orcamento--final button {
+        width: 100%;
+    }
+}
+
+
+/* Listagem de orçamentos */
+
+.lista--orcamentos .lista__cabecalho,
+.lista--orcamentos .lista__item {
+    grid-template-columns: 0.7fr 1.5fr 1fr 1fr 1fr;
+}
+
+.lista--orcamentos .lista__item {
+    display: grid;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.lista--orcamentos .lista__item:hover {
+    background-color: #f5f7fa;
+}
+
+.lista--orcamentos .lista__item:focus-visible {
+    outline: 2px solid var(--azul);
+    outline-offset: -2px;
+}
+
+@media (max-width: 767px) {
+
+    .lista--orcamentos .lista__item {
+        display: flex;
+    }
+
+    .lista--orcamentos .lista__campo {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+}
